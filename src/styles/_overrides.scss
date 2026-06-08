@@ -1,0 +1,86 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// DateInput — theme overrides
+//
+// Copy this file into your project, uncomment the variables you want to change,
+// then import it BEFORE date-input.scss:
+//
+//   @use 'your-overrides' as *;        // or @import
+//   @use 'date-input/src/styles/date-input';
+//
+// All variables use !default in _tokens.scss, so anything set here wins.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── Accent (active states, selected day, focus border) ───────────────────────
+// Indigo example:
+// $dp-dark-accent:        #6366f1;
+// $dp-dark-accent-fg:     #ffffff;
+// $dp-dark-accent-soft:   rgba(99, 102, 241, 0.18);
+// $dp-dark-accent-softer: rgba(99, 102, 241, 0.10);
+
+// $dp-light-accent:        #4f46e5;
+// $dp-light-accent-fg:     #ffffff;
+// $dp-light-accent-soft:   rgba(79, 70, 229, 0.14);
+// $dp-light-accent-softer: rgba(79, 70, 229, 0.07);
+
+// Cyan example:
+// $dp-dark-accent:        #06b6d4;
+// $dp-dark-accent-fg:     #001f26;
+// $dp-dark-accent-soft:   rgba(6, 182, 212, 0.18);
+// $dp-dark-accent-softer: rgba(6, 182, 212, 0.10);
+
+// $dp-light-accent:        #0891b2;
+// $dp-light-accent-fg:     #ffffff;
+// $dp-light-accent-soft:   rgba(8, 145, 178, 0.14);
+// $dp-light-accent-softer: rgba(8, 145, 178, 0.07);
+
+// ── Backgrounds ──────────────────────────────────────────────────────────────
+// $dp-dark-bg-0: #0E1014;   // page / deepest layer
+// $dp-dark-bg-1: #15181E;   // field + panel surface
+// $dp-dark-bg-2: #1B1F27;   // popover / shortcuts bar
+// $dp-dark-bg-3: #232833;   // hover fills
+
+// $dp-light-bg-0: #FAFAF7;
+// $dp-light-bg-1: #FFFFFF;
+// $dp-light-bg-2: #F5F5F1;
+// $dp-light-bg-3: #ECECE7;
+
+// ── Borders ───────────────────────────────────────────────────────────────────
+// $dp-dark-line:        #2A303C;
+// $dp-dark-line-strong: #3A4150;
+
+// $dp-light-line:        #E4E4DF;
+// $dp-light-line-strong: #C9C9C2;
+
+// ── Foreground / text ────────────────────────────────────────────────────────
+// $dp-dark-fg-0: #ECEEF2;   // primary text
+// $dp-dark-fg-1: #B8BDC8;   // secondary text
+// $dp-dark-fg-2: #7B8390;   // muted (icon, placeholder)
+// $dp-dark-fg-3: #545B68;   // very muted (DOW headers, disabled)
+
+// $dp-light-fg-0: #14161A;
+// $dp-light-fg-1: #3D424B;
+// $dp-light-fg-2: #6B7280;
+// $dp-light-fg-3: #9CA1AB;
+
+// ── Danger (error state) ──────────────────────────────────────────────────────
+// $dp-dark-danger:  #E25C5C;
+// $dp-light-danger: #C84A4A;
+
+// ── Border radius ─────────────────────────────────────────────────────────────
+// $dp-r-sm: 6px;    // buttons, cells, nav icons
+// $dp-r-md: 10px;   // field, popovers
+// $dp-r-lg: 12px;   // panel dropdown
+
+// Sharper / square feel:
+// $dp-r-sm: 3px;
+// $dp-r-md: 5px;
+// $dp-r-lg: 6px;
+
+// Pill / rounded feel:
+// $dp-r-sm: 8px;
+// $dp-r-md: 14px;
+// $dp-r-lg: 16px;
+
+// ── Typography ────────────────────────────────────────────────────────────────
+// $dp-font-sans: 'Your Font', sans-serif;
+// $dp-font-mono: 'Your Mono Font', monospace;
