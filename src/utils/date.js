@@ -10,7 +10,10 @@ export const startOfWeek = (d) => { const x = startOfDay(d); x.setDate(x.getDate
 export const endOfWeek = (d) => { const x = startOfWeek(d); x.setDate(x.getDate() + 6); return x; };
 export const startOfMonth = (d) => new Date(d.getFullYear(), d.getMonth(), 1);
 export const endOfMonth = (d) => new Date(d.getFullYear(), d.getMonth()+1, 0);
+export const startOfYear = (d) => new Date(d.getFullYear(), 0, 1);
+export const endOfYear = (d) => new Date(d.getFullYear(), 11, 31);
 export const addMonths = (d, n) => new Date(d.getFullYear(), d.getMonth()+n, 1);
+export const addYears = (d, n) => new Date(d.getFullYear()+n, d.getMonth(), d.getDate());
 export const addDays = (d, n) => { const x = startOfDay(d); x.setDate(x.getDate()+n); return x; };
 
 export function fmtDisplay(d, fmt = 'mm/dd/yyyy') {
@@ -47,11 +50,15 @@ export function buildShortcuts(mode) {
   const today = startOfDay(new Date());
   if (mode === 'range') {
     const yest = addDays(today, -1);
+    const lastYear = addYears(today, -1);
     return [
       { id: 'today', label: 'Today', range: [today, today] },
       { id: 'yesterday', label: 'Yesterday', range: [yest, yest] },
+      { id: 'last7', label: 'Last 7 days', range: [addDays(today, -6), today] },
       { id: 'thismonth', label: 'This month', range: [startOfMonth(today), endOfMonth(today)] },
       { id: 'lastmonth', label: 'Last month', range: [startOfMonth(addMonths(today, -1)), endOfMonth(addMonths(today, -1))] },
+      { id: 'thisyear', label: 'This year', range: [startOfYear(today), endOfYear(today)] },
+      { id: 'lastyear', label: 'Last year', range: [startOfYear(lastYear), endOfYear(lastYear)] },
     ];
   }
   return [

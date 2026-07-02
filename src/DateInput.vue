@@ -360,18 +360,9 @@ function clearAll() {
     </div>
 
     <!-- panel -->
-    <div v-if="open" class="dp__panel">
-      <MonthCalendar
-        :view-date="viewDate"
-        :mode="mode"
-        :value="value"
-        :range="range"
-        :hover-date="hoverDate"
-        @update:viewDate="viewDate = $event"
-        @update:hoverDate="hoverDate = $event"
-        @pick="onPick"
-      />
-      <div class="dp__scRow">
+    <div v-if="open" class="dp__panel" :class="{ 'dp__panel--range': mode === 'range' }">
+      <!-- range: shortcuts as a left sidebar -->
+      <div v-if="mode === 'range'" class="dp__scCol">
         <button
           v-for="sc in shortcuts"
           :key="sc.id"
@@ -379,6 +370,29 @@ function clearAll() {
           :class="{ 'is-active': isShortcutActive(sc) }"
           @click="applyShortcut(sc)"
         >{{ sc.label }}</button>
+      </div>
+
+      <div class="dp__panelBody">
+        <MonthCalendar
+          :view-date="viewDate"
+          :mode="mode"
+          :value="value"
+          :range="range"
+          :hover-date="hoverDate"
+          @update:viewDate="viewDate = $event"
+          @update:hoverDate="hoverDate = $event"
+          @pick="onPick"
+        />
+        <!-- single: shortcuts below the calendar -->
+        <div v-if="mode !== 'range'" class="dp__scRow">
+          <button
+            v-for="sc in shortcuts"
+            :key="sc.id"
+            class="dp__scChip"
+            :class="{ 'is-active': isShortcutActive(sc) }"
+            @click="applyShortcut(sc)"
+          >{{ sc.label }}</button>
+        </div>
       </div>
     </div>
   </div>

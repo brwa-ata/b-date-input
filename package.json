@@ -1,14 +1,14 @@
 {
-  "name": "@brwa/vue-date-input",
+  "name": "b-date-input",
   "version": "0.1.0",
   "description": "Compact Vue 3 date input with single/range modes, manual entry, shortcuts, and dark/light themes.",
   "type": "module",
-  "main": "./dist/vue-date-input.umd.cjs",
-  "module": "./dist/vue-date-input.js",
+  "main": "./dist/b-date-input.umd.cjs",
+  "module": "./dist/b-date-input.js",
   "exports": {
     ".": {
-      "import": "./dist/vue-date-input.js",
-      "require": "./dist/vue-date-input.umd.cjs"
+      "import": "./dist/b-date-input.js",
+      "require": "./dist/b-date-input.umd.cjs"
     },
     "./style.css": "./dist/style.css"
   },
@@ -16,9 +16,14 @@
     "dist",
     "src"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brwa-ata/b-date-input.git"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:lib": "vite build",
     "preview": "vite preview"
   },
   "peerDependencies": {

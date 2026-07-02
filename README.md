@@ -1,12 +1,38 @@
-# @yourname/vue-date-input
+# b-date-input
 
 Compact Vue 3 date input with single/range modes, manual `mm/dd/yyyy` entry, shortcuts (Today, Yesterday, This week, This month), and dark/light themes.
 
 ## Install
 
+The built `dist/` is committed to the repo, so consuming projects install straight from the private GitHub URL — no build step on their side:
+
 ```bash
-npm install @yourname/vue-date-input
+npm install git+https://github.com/brwa-ata/b-date-input.git --force
 ```
+
+In a consuming project's `package.json`:
+
+```json
+{
+  "dependencies": {
+    "b-date-input": "git+https://github.com/brwa-ata/b-date-input.git"
+  }
+}
+```
+
+> Requires access to the private repo — locally your git credentials handle this; in CI use a deploy key or a `GITHUB_TOKEN` with repo read access.
+
+### Publishing updates
+
+After changing the source, rebuild and commit the `dist/` output so consumers get the update:
+
+```bash
+npm run build:lib
+git commit -am "build: <what changed>"
+git push
+```
+
+Consumers then re-pull with `npm install git+https://github.com/brwa-ata/b-date-input.git --force`.
 
 ## Use
 
@@ -14,8 +40,8 @@ Register globally:
 
 ```js
 import { createApp } from 'vue';
-import DateInput from '@yourname/vue-date-input';
-import '@yourname/vue-date-input/style.css';
+import DateInput from 'b-date-input';
+import 'b-date-input/style.css';
 
 createApp(App).use(DateInput).mount('#app');
 ```
@@ -25,8 +51,8 @@ Or import locally:
 ```vue
 <script setup>
 import { ref } from 'vue';
-import { DateInput } from '@yourname/vue-date-input';
-import '@yourname/vue-date-input/style.css';
+import { DateInput } from 'b-date-input';
+import 'b-date-input/style.css';
 
 const single = ref(null);            // Date | null
 const range  = ref([null, null]);    // [Date, Date] | [null, null]
@@ -42,7 +68,7 @@ const range  = ref([null, null]);    // [Date, Date] | [null, null]
 
 | Prop          | Type                           | Default        | Notes                                            |
 |---------------|--------------------------------|----------------|--------------------------------------------------|
-| `mode`        | `'single' \| 'range'`          | `'single'`     | Range mode shows 4 shortcuts; single shows 2.    |
+| `mode`        | `'single' \| 'range'`          | `'single'`     | Range mode shows 7 shortcuts on the left; single shows 2. |
 | `modelValue`  | `Date \| [Date, Date]`         | `null`         | `v-model`. Date for single, tuple for range.     |
 | `label`       | `String`                       | `'Date'`       | Field label above the input.                     |
 | `format`      | `'mm/dd/yyyy' \| 'dd/mm/yyyy'` | `'dd/mm/yyyy'` | Display + parse format for manual entry.         |
@@ -157,7 +183,7 @@ $dp-r-md: 6px;
 $dp-r-lg: 8px;
 
 // ── then import the component styles ──────────────────────────
-@use '@yourname/vue-date-input/src/styles/date-input';
+@use 'b-date-input/src/styles/date-input';
 ```
 
 **2. Import your theme file instead of the default CSS**
@@ -165,7 +191,7 @@ $dp-r-lg: 8px;
 ```js
 // main.js — replace the default style import
 import './styles/my-date-theme.scss'   // ← your file (imports component styles internally)
-// remove: import '@yourname/vue-date-input/style.css'
+// remove: import 'b-date-input/style.css'
 ```
 
 #### All overrideable SCSS variables

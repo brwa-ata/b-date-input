@@ -352,7 +352,31 @@
   }
 
   &--mode-range &__panel {
-    width: 320px;
+    display: flex;
+    align-items: stretch;
+    width: auto;
+  }
+
+  // range calendar keeps a fixed width; the sidebar sits to its left
+  &__panel--range &__panelBody {
+    width: 280px;
+    flex-shrink: 0;
+  }
+
+  // ---- shortcuts column (left of calendar, range mode) ----
+  &__scCol {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px 8px;
+    border-right: 1px solid var(--dp-line);
+    background: var(--dp-bg-2);
+    min-width: 100px;
+
+    .dp__scChip {
+      width: 100%;
+      text-align: left;
+    }
   }
 
   // ---- shortcuts row (below calendar) ----
