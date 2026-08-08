@@ -1,6 +1,6 @@
 {
   "name": "b-date-input",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Compact Vue 3 date input with single/range modes, manual entry, shortcuts, and dark/light themes.",
   "type": "module",
   "main": "./dist/b-date-input.umd.cjs",
