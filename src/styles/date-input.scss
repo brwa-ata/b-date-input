@@ -1,5 +1,13 @@
 @use './tokens' as *;
 
+// Selectors below are written `& &__x` ( -> `.dp .dp__x` ) rather than the
+// plain `&__x` a BEM sheet would use, and the calendar is nested under `.dp`
+// for the same reason. Host apps ship broad resets -- b-datatable, for one,
+// zeroes padding on every non-Vuetify node inside a table with
+// `.b-dt :where(:not([class*="v-"]))`. That is a single class worth of
+// specificity, exactly what `.dp__scRow` carries, so whichever stylesheet the
+// bundler happens to emit last wins and the widget can come out with its
+// padding stripped. Two classes puts our own layout out of reach of a tie.
 .dp {
   position: relative;
   width: 100%;
@@ -44,7 +52,7 @@
     }
   }
 
-  &__label {
+  & &__label {
     display: block;
     font-size: 11.5px;
     font-weight: 500;
@@ -53,7 +61,7 @@
     margin-bottom: 6px;
   }
 
-  &__field {
+  & &__field {
     display: flex;
     align-items: center;
     gap: 9px;
@@ -88,7 +96,7 @@
     }
   }
 
-  &__input {
+  & &__input {
     flex: 1;
     min-width: 0;
     background: none;
@@ -114,13 +122,13 @@
     flex: 0 1 auto;
   }
 
-  &__sep {
+  & &__sep {
     font-family: $dp-font-mono;
     color: var(--dp-fg-3);
     font-size: 12px;
   }
 
-  &__clear {
+  & &__clear {
     width: 20px;
     height: 20px;
     border-radius: 50%;
@@ -137,7 +145,7 @@
     }
   }
 
-  &__details {
+  & &__details {
     display: flex;
     flex-direction: column;
     gap: 2px;
@@ -337,7 +345,7 @@
     }
   }
 
-  &__panel {
+  & &__panel {
     position: absolute;
     top: calc(100% + 6px);
     left: 0;
@@ -364,7 +372,7 @@
   }
 
   // ---- shortcuts column (left of calendar, range mode) ----
-  &__scCol {
+  & &__scCol {
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -380,7 +388,7 @@
   }
 
   // ---- shortcuts row (below calendar) ----
-  &__scRow {
+  & &__scRow {
     display: flex;
     flex-wrap: wrap;
     gap: 4px;
@@ -389,7 +397,7 @@
     background: var(--dp-bg-2);
   }
 
-  &__scChip {
+  & &__scChip {
     font-size: 11px;
     font-weight: 500;
     color: var(--dp-fg-1);
@@ -415,7 +423,9 @@
 }
 
 // ---- month calendar ----
-.mc {
+// nested under .dp for the same reason the blocks above are: see the note at
+// the top of the file
+.dp .mc {
   padding: 10px 10px 8px;
   user-select: none;
 
