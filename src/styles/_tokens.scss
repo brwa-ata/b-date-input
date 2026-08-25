@@ -11,11 +11,15 @@ $dp-dark-fg-0:          #ECEEF2                          !default;
 $dp-dark-fg-1:          #B8BDC8                          !default;
 $dp-dark-fg-2:          #7B8390                          !default;
 $dp-dark-fg-3:          #545B68                          !default;
-$dp-dark-accent:        #E8895A                          !default;
-$dp-dark-accent-fg:     #1a0e08                          !default;
-$dp-dark-accent-soft:   rgba(232, 137, 90, 0.18)         !default;
-$dp-dark-accent-softer: rgba(232, 137, 90, 0.10)         !default;
+$dp-dark-accent:        $dp-dark-fg-0                    !default;
+$dp-dark-accent-fg:     $dp-dark-bg-1                    !default;
+$dp-dark-accent-soft:   rgba($dp-dark-fg-0, 0.18)        !default;
+$dp-dark-accent-softer: rgba($dp-dark-fg-0, 0.10)        !default;
 $dp-dark-danger:        #E25C5C                          !default;
+// Vuetify's emphasis opacities are per theme, and the field's label and hover
+// outline track them
+$dp-dark-label-alpha:      64%                           !default;
+$dp-dark-line-alpha-hover: 96%                           !default;
 $dp-dark-shadow:
   0 1px 0 rgba(255, 255, 255, 0.04) inset,
   0 18px 36px -10px rgba(0, 0, 0, 0.6),
@@ -34,11 +38,13 @@ $dp-light-fg-0:          #14161A                         !default;
 $dp-light-fg-1:          #3D424B                         !default;
 $dp-light-fg-2:          #6B7280                         !default;
 $dp-light-fg-3:          #9CA1AB                         !default;
-$dp-light-accent:        #D77144                         !default;
-$dp-light-accent-fg:     #FFFFFF                         !default;
-$dp-light-accent-soft:   rgba(215, 113, 68, 0.14)        !default;
-$dp-light-accent-softer: rgba(215, 113, 68, 0.07)        !default;
+$dp-light-accent:        $dp-light-fg-0                 !default;
+$dp-light-accent-fg:     $dp-light-bg-1                 !default;
+$dp-light-accent-soft:   rgba($dp-light-fg-0, 0.14)     !default;
+$dp-light-accent-softer: rgba($dp-light-fg-0, 0.07)     !default;
 $dp-light-danger:        #C84A4A                         !default;
+$dp-light-label-alpha:      58%                          !default;
+$dp-light-line-alpha-hover: 95%                          !default;
 $dp-light-shadow:
   0 1px 0 rgba(255, 255, 255, 0.6) inset,
   0 12px 28px -8px rgba(20, 22, 26, 0.18),
@@ -50,6 +56,19 @@ $dp-light-shadow:
 $dp-r-sm: 6px  !default;
 $dp-r-md: 10px !default;
 $dp-r-lg: 12px !default;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FIELD — the input box. Defaults track a Vuetify outlined field so the two
+// can sit side by side: same height, same corner, same label step, and an
+// outline painted from currentColor at Vuetify's own emphasis opacities
+// ( resting / hover / focused ) so it picks up whatever the host is using for
+// text in either theme.
+// ─────────────────────────────────────────────────────────────────────────────
+$dp-field-height:      36px  !default;
+$dp-field-radius:      8px   !default;
+$dp-field-font-size:   14px  !default;
+$dp-field-padding-x:   16px  !default;
+$dp-line-alpha:        38%   !default;  // resting outline, same in both themes
 
 // ─────────────────────────────────────────────────────────────────────────────
 // TYPOGRAPHY
@@ -77,6 +96,8 @@ $dp-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace 
   --dp-accent-softer: #{$dp-dark-accent-softer};
   --dp-danger:        #{$dp-dark-danger};
   --dp-shadow:        #{$dp-dark-shadow};
+  --dp-label-alpha:      #{$dp-dark-label-alpha};
+  --dp-line-alpha-hover: #{$dp-dark-line-alpha-hover};
 }
 
 @mixin theme-light {
@@ -96,12 +117,22 @@ $dp-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace 
   --dp-accent-softer: #{$dp-light-accent-softer};
   --dp-danger:        #{$dp-light-danger};
   --dp-shadow:        #{$dp-light-shadow};
+  --dp-label-alpha:      #{$dp-light-label-alpha};
+  --dp-line-alpha-hover: #{$dp-light-line-alpha-hover};
 }
 
 @mixin shape-tokens {
   --dp-r-sm: #{$dp-r-sm};
   --dp-r-md: #{$dp-r-md};
   --dp-r-lg: #{$dp-r-lg};
+}
+
+@mixin field-tokens {
+  --dp-field-h:  #{$dp-field-height};
+  --dp-field-r:  #{$dp-field-radius};
+  --dp-field-fs: #{$dp-field-font-size};
+  --dp-field-px: #{$dp-field-padding-x};
+  --dp-line-alpha: #{$dp-line-alpha};
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

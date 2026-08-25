@@ -88,6 +88,8 @@ const range  = ref([null, null]);    // [Date, Date] | [null, null]
 
 The component exposes every visual token so you can fully re-skin it without forking the source. There are two complementary mechanisms — pick whichever fits your build setup.
 
+Out of the box it is monochrome: `--dp-accent` defaults to the theme foreground, so the selected day and the active shortcut chip come out near-black on light and near-white on dark. Point `$dp-*-accent` at a hue if you want a coloured picker — the field itself is unaffected, it always paints from `currentColor`.
+
 ---
 
 ### Option A — CSS custom properties (runtime, no build step)
@@ -140,12 +142,30 @@ Target a single instance via a wrapper class instead of `.dp`:
 | `--dp-fg-1` | Secondary text |
 | `--dp-fg-2` | Muted text, icons |
 | `--dp-fg-3` | Very muted (DOW headers) |
-| `--dp-accent` | Selected day, focus ring, active chips |
-| `--dp-accent-fg` | Text on top of accent fill |
+| `--dp-accent` | Selected day, today, active chips. Defaults to `--dp-fg-0` |
+| `--dp-accent-fg` | Text on top of accent fill. Defaults to `--dp-bg-1` |
 | `--dp-accent-soft` | In-range background |
 | `--dp-accent-softer` | Focus ring glow |
 | `--dp-danger` | Error state border |
 | `--dp-shadow` | Panel drop shadow |
+
+**Field**
+
+The outlined field is built to pass for a Vuetify `v-field`: same height, same
+corner, same label step, and an outline painted from **`currentColor`** at
+Vuetify's emphasis opacities. Nothing here names a colour, so the field picks up
+whatever the host uses for text and matches in light and dark without being
+told which is which.
+
+| Token | Default | Role |
+|---|---|---|
+| `--dp-field-h` | `36px` | Field height |
+| `--dp-field-r` | `8px` | Field corner radius |
+| `--dp-field-fs` | `14px` | Label size at rest; floated is 3/4 of it |
+| `--dp-field-px` | `16px` | Horizontal padding, and the floated label's inset |
+| `--dp-line-alpha` | `38%` | Outline at rest |
+| `--dp-line-alpha-hover` | `95%` light / `96%` dark | Outline on hover |
+| `--dp-label-alpha` | `58%` light / `64%` dark | Label at rest; focused is full |
 
 **Shape**
 
@@ -208,11 +228,13 @@ $dp-dark-fg-0:          #ECEEF2   !default;
 $dp-dark-fg-1:          #B8BDC8   !default;
 $dp-dark-fg-2:          #7B8390   !default;
 $dp-dark-fg-3:          #545B68   !default;
-$dp-dark-accent:        #E8895A   !default;
-$dp-dark-accent-fg:     #1a0e08   !default;
-$dp-dark-accent-soft:   rgba(232, 137, 90, 0.18) !default;
-$dp-dark-accent-softer: rgba(232, 137, 90, 0.10) !default;
+$dp-dark-accent:        $dp-dark-fg-0 !default;   // near-white
+$dp-dark-accent-fg:     $dp-dark-bg-1 !default;
+$dp-dark-accent-soft:   rgba($dp-dark-fg-0, 0.18) !default;
+$dp-dark-accent-softer: rgba($dp-dark-fg-0, 0.10) !default;
 $dp-dark-danger:        #E25C5C   !default;
+$dp-dark-label-alpha:      64%    !default;
+$dp-dark-line-alpha-hover: 96%    !default;
 
 // ── Light theme ───────────────────────────────────────────────
 $dp-light-bg-0:          #FAFAF7  !default;
@@ -225,16 +247,25 @@ $dp-light-fg-0:          #14161A  !default;
 $dp-light-fg-1:          #3D424B  !default;
 $dp-light-fg-2:          #6B7280  !default;
 $dp-light-fg-3:          #9CA1AB  !default;
-$dp-light-accent:        #D77144  !default;
-$dp-light-accent-fg:     #FFFFFF  !default;
-$dp-light-accent-soft:   rgba(215, 113, 68, 0.14) !default;
-$dp-light-accent-softer: rgba(215, 113, 68, 0.07) !default;
+$dp-light-accent:        $dp-light-fg-0 !default;  // near-black
+$dp-light-accent-fg:     $dp-light-bg-1 !default;
+$dp-light-accent-soft:   rgba($dp-light-fg-0, 0.14) !default;
+$dp-light-accent-softer: rgba($dp-light-fg-0, 0.07) !default;
 $dp-light-danger:        #C84A4A  !default;
+$dp-light-label-alpha:      58%   !default;
+$dp-light-line-alpha-hover: 95%   !default;
 
 // ── Shape ─────────────────────────────────────────────────────
 $dp-r-sm: 6px   !default;   // buttons, cells
-$dp-r-md: 10px  !default;   // field, popovers
+$dp-r-md: 10px  !default;   // popovers
 $dp-r-lg: 12px  !default;   // panel
+
+// ── Field ─────────────────────────────────────────────────────
+$dp-field-height:    36px  !default;
+$dp-field-radius:    8px   !default;
+$dp-field-font-size: 14px  !default;
+$dp-field-padding-x: 16px  !default;
+$dp-line-alpha:      38%   !default;
 
 // ── Typography ────────────────────────────────────────────────
 $dp-font-sans: 'Inter', system-ui, sans-serif           !default;

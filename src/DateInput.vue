@@ -279,6 +279,17 @@ function clearAll() {
       :class="{ 'is-error': error, 'is-open': open, 'is-floated': isFloating }"
       :style="bgColor ? { background: bgColor } : undefined"
     >
+      <!--
+        Outlined draws its border as three segments with a gap for the floated
+        label, the way Vuetify's v-field does, rather than as a full box with
+        the label sitting on an opaque patch -- a patch only ever matches a
+        host whose surface happens to equal --dp-bg-1.
+      -->
+      <div v-if="variant === 'outlined'" class="dp__outline" aria-hidden="true">
+        <div class="dp__outlineStart"></div>
+        <div class="dp__outlineNotch"><span>{{ label }}</span></div>
+        <div class="dp__outlineEnd"></div>
+      </div>
       <label
         v-if="variant !== 'normal'"
         class="dp__label"
@@ -314,6 +325,17 @@ function clearAll() {
       :class="{ 'is-error': error, 'is-open': open, 'is-floated': isFloating }"
       :style="bgColor ? { background: bgColor } : undefined"
     >
+      <!--
+        Outlined draws its border as three segments with a gap for the floated
+        label, the way Vuetify's v-field does, rather than as a full box with
+        the label sitting on an opaque patch -- a patch only ever matches a
+        host whose surface happens to equal --dp-bg-1.
+      -->
+      <div v-if="variant === 'outlined'" class="dp__outline" aria-hidden="true">
+        <div class="dp__outlineStart"></div>
+        <div class="dp__outlineNotch"><span>{{ label }}</span></div>
+        <div class="dp__outlineEnd"></div>
+      </div>
       <label
         v-if="variant !== 'normal'"
         class="dp__label"

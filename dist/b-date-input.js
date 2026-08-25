@@ -270,7 +270,11 @@ var R = { class: "mc" }, z = { class: "mc__head" }, B = { class: "mc__selectors"
 	key: 0,
 	class: "dp__label"
 }, re = {
-	key: 2,
+	key: 0,
+	class: "dp__outline",
+	"aria-hidden": "true"
+}, ie = { class: "dp__outlineNotch" }, ae = {
+	key: 3,
 	width: "14",
 	height: "14",
 	viewBox: "0 0 16 16",
@@ -278,8 +282,12 @@ var R = { class: "mc" }, z = { class: "mc__head" }, B = { class: "mc__selectors"
 	stroke: "currentColor",
 	"stroke-width": "1.5",
 	"stroke-linecap": "round"
-}, ie = ["value", "placeholder"], ae = {
-	key: 2,
+}, oe = ["value", "placeholder"], se = {
+	key: 0,
+	class: "dp__outline",
+	"aria-hidden": "true"
+}, ce = { class: "dp__outlineNotch" }, le = {
+	key: 3,
 	width: "14",
 	height: "14",
 	viewBox: "0 0 16 16",
@@ -287,13 +295,13 @@ var R = { class: "mc" }, z = { class: "mc__head" }, B = { class: "mc__selectors"
 	stroke: "currentColor",
 	"stroke-width": "1.5",
 	"stroke-linecap": "round"
-}, oe = ["value", "placeholder"], se = ["value", "placeholder"], ce = {
+}, ue = ["value", "placeholder"], de = ["value", "placeholder"], fe = {
 	key: 0,
 	class: "dp__scCol"
-}, le = ["onClick"], ue = { class: "dp__panelBody" }, de = {
+}, pe = ["onClick"], me = { class: "dp__panelBody" }, he = {
 	key: 0,
 	class: "dp__scRow"
-}, fe = ["onClick"], Z = {
+}, ge = ["onClick"], Z = {
 	__name: "DateInput",
 	props: {
 		mode: {
@@ -455,7 +463,7 @@ var R = { class: "mc" }, z = { class: "mc__head" }, B = { class: "mc__selectors"
 			let n = e === "start" ? P : L, r = n.value, i = t.target.value, a = Z(r, i, x.format);
 			a === i ? n.value = i : (t.target.value = a, n.value = a);
 		}
-		function pe() {
+		function _e() {
 			k.value = null, A.value = [null, null], N.value = "", P.value = "", L.value = "", E.value = !1, W();
 		}
 		return (t, u) => (f(), i("div", {
@@ -478,17 +486,22 @@ var R = { class: "mc" }, z = { class: "mc__head" }, B = { class: "mc__selectors"
 				}]),
 				style: l(o.bgColor ? { background: o.bgColor } : void 0)
 			}, [
+				o.variant === "outlined" ? (f(), i("div", re, [
+					u[9] ||= a("div", { class: "dp__outlineStart" }, null, -1),
+					a("div", ie, [a("span", null, g(o.label), 1)]),
+					u[10] ||= a("div", { class: "dp__outlineEnd" }, null, -1)
+				])) : r("", !0),
 				o.variant === "normal" ? r("", !0) : (f(), i("label", {
-					key: 0,
+					key: 1,
 					class: c(["dp__label", {
 						"is-floated": V.value,
 						"is-active": C.value
 					}])
 				}, g(o.label), 3)),
 				o.icon ? (f(), n(h(o.icon), {
-					key: 1,
+					key: 2,
 					class: "dp__icon"
-				})) : (f(), i("svg", re, [...u[9] ||= [a("rect", {
+				})) : (f(), i("svg", ae, [...u[11] ||= [a("rect", {
 					x: "2.25",
 					y: "3.25",
 					width: "11.5",
@@ -504,11 +517,11 @@ var R = { class: "mc" }, z = { class: "mc__head" }, B = { class: "mc__selectors"
 					onFocus: u[0] ||= (e) => C.value = !0,
 					onBlur: Y,
 					onInput: Q
-				}, null, 40, ie),
+				}, null, 40, oe),
 				o.clearable && (k.value || N.value) ? (f(), i("button", {
-					key: 3,
+					key: 4,
 					class: "dp__clear",
-					onMousedown: y(pe, ["prevent"]),
+					onMousedown: y(_e, ["prevent"]),
 					"aria-label": "Clear"
 				}, "×", 32)) : r("", !0)
 			], 6)) : (f(), i("div", {
@@ -520,17 +533,22 @@ var R = { class: "mc" }, z = { class: "mc__head" }, B = { class: "mc__selectors"
 				}]),
 				style: l(o.bgColor ? { background: o.bgColor } : void 0)
 			}, [
+				o.variant === "outlined" ? (f(), i("div", se, [
+					u[12] ||= a("div", { class: "dp__outlineStart" }, null, -1),
+					a("div", ce, [a("span", null, g(o.label), 1)]),
+					u[13] ||= a("div", { class: "dp__outlineEnd" }, null, -1)
+				])) : r("", !0),
 				o.variant === "normal" ? r("", !0) : (f(), i("label", {
-					key: 0,
+					key: 1,
 					class: c(["dp__label", {
 						"is-floated": V.value,
 						"is-active": C.value
 					}])
 				}, g(o.label), 3)),
 				o.icon ? (f(), n(h(o.icon), {
-					key: 1,
+					key: 2,
 					class: "dp__icon"
-				})) : (f(), i("svg", ae, [...u[10] ||= [a("rect", {
+				})) : (f(), i("svg", le, [...u[14] ||= [a("rect", {
 					x: "2.25",
 					y: "3.25",
 					width: "11.5",
@@ -548,8 +566,8 @@ var R = { class: "mc" }, z = { class: "mc__head" }, B = { class: "mc__selectors"
 					},
 					onBlur: u[2] ||= (e) => X("start"),
 					onInput: u[3] ||= (e) => $("start", e)
-				}, null, 42, oe),
-				u[11] ||= a("span", { class: "dp__sep" }, "→", -1),
+				}, null, 42, ue),
+				u[15] ||= a("span", { class: "dp__sep" }, "→", -1),
 				a("input", {
 					value: L.value,
 					class: c(["dp__input", { "is-focus": R.value === "end" && C.value }]),
@@ -561,11 +579,11 @@ var R = { class: "mc" }, z = { class: "mc__head" }, B = { class: "mc__selectors"
 					},
 					onBlur: u[5] ||= (e) => X("end"),
 					onInput: u[6] ||= (e) => $("end", e)
-				}, null, 42, se),
+				}, null, 42, de),
 				o.clearable && (A.value[0] || A.value[1] || P.value || L.value) ? (f(), i("button", {
-					key: 3,
+					key: 4,
 					class: "dp__clear",
-					onMousedown: y(pe, ["prevent"]),
+					onMousedown: y(_e, ["prevent"]),
 					"aria-label": "Clear"
 				}, "×", 32)) : r("", !0)
 			], 6)),
@@ -579,11 +597,11 @@ var R = { class: "mc" }, z = { class: "mc__head" }, B = { class: "mc__selectors"
 			C.value ? (f(), i("div", {
 				key: 4,
 				class: c(["dp__panel", { "dp__panel--range": o.mode === "range" }])
-			}, [o.mode === "range" ? (f(), i("div", ce, [(f(!0), i(e, null, m(B.value, (e) => (f(), i("button", {
+			}, [o.mode === "range" ? (f(), i("div", fe, [(f(!0), i(e, null, m(B.value, (e) => (f(), i("button", {
 				key: e.id,
 				class: c(["dp__scChip", { "is-active": J(e) }]),
 				onClick: (t) => q(e)
-			}, g(e.label), 11, le))), 128))])) : r("", !0), a("div", ue, [s(te, {
+			}, g(e.label), 11, pe))), 128))])) : r("", !0), a("div", me, [s(te, {
 				"view-date": M.value,
 				mode: o.mode,
 				value: k.value,
@@ -598,11 +616,11 @@ var R = { class: "mc" }, z = { class: "mc__head" }, B = { class: "mc__selectors"
 				"value",
 				"range",
 				"hover-date"
-			]), o.mode === "range" ? r("", !0) : (f(), i("div", de, [(f(!0), i(e, null, m(B.value, (e) => (f(), i("button", {
+			]), o.mode === "range" ? r("", !0) : (f(), i("div", he, [(f(!0), i(e, null, m(B.value, (e) => (f(), i("button", {
 				key: e.id,
 				class: c(["dp__scChip", { "is-active": J(e) }]),
 				onClick: (t) => q(e)
-			}, g(e.label), 11, fe))), 128))]))])], 2)) : r("", !0)
+			}, g(e.label), 11, ge))), 128))]))])], 2)) : r("", !0)
 		], 2));
 	}
 };

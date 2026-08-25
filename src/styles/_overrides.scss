@@ -10,7 +10,23 @@
 // All variables use !default in _tokens.scss, so anything set here wins.
 // ─────────────────────────────────────────────────────────────────────────────
 
-// ── Accent (active states, selected day, focus border) ───────────────────────
+// ── Field (outlined variant tracks a Vuetify v-field) ────────────────────────
+// The outline and label are painted from currentColor at these opacities, so
+// they follow the host's text colour in either theme. Metrics below match a
+// Vuetify field at density -2.5; raise them for a roomier host.
+// $dp-field-height:    36px;
+// $dp-field-radius:    8px;
+// $dp-field-font-size: 14px;
+// $dp-field-padding-x: 16px;
+// $dp-line-alpha:      38%;
+// $dp-dark-line-alpha-hover:  96%;
+// $dp-light-line-alpha-hover: 95%;
+// $dp-dark-label-alpha:       64%;
+// $dp-light-label-alpha:      58%;
+
+// ── Accent (selected day, today, active chips) ───────────────────────────────
+// Defaults to the theme foreground: near-white on dark, near-black on light.
+// Uncomment a pair below for a coloured picker.
 // Indigo example:
 // $dp-dark-accent:        #6366f1;
 // $dp-dark-accent-fg:     #ffffff;

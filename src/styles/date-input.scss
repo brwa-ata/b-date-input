@@ -12,8 +12,11 @@
   position: relative;
   width: 100%;
   font-family: $dp-font-sans;
-  color: var(--dp-fg-0);
+  // deliberately no `color`: the field's outline and label are painted from
+  // currentColor, so they inherit whatever the host uses for text and match a
+  // Vuetify input in either theme without being told the theme
   @include shape-tokens;
+  @include field-tokens;
 
   &--dark {
     @include theme-dark;
@@ -62,15 +65,15 @@
   }
 
   & &__field {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 9px;
-    height: 38px;
-    padding: 0 10px;
+    height: var(--dp-field-h);
+    padding: 0 var(--dp-field-px);
     background: transparent;
     border: 1px solid var(--dp-line);
-    border-radius: var(--dp-r-md);
-    color: var(--dp-fg-2);
+    border-radius: var(--dp-field-r);
     transition: border-color 120ms ease, box-shadow 120ms ease;
 
     &:hover {
@@ -177,13 +180,15 @@
       position: absolute;
       // unfloated: vertically centered, left-aligned after the icon
       top: 50%;
-      left: 33px; // padding(10) + icon(14) + gap(9)
+      left: calc(var(--dp-field-px) + 23px); // padding + icon(14) + gap(9)
       transform: translateY(-50%);
-      font-size: 13px;
+      font-size: var(--dp-field-fs);
       font-weight: 400;
-      color: var(--dp-fg-2);
+      // currentColor at Vuetify's medium emphasis, so the label reads exactly
+      // as one of its own does on the same background
+      color: color-mix(in srgb, currentColor var(--dp-label-alpha), transparent);
       margin: 0;
-      padding: 0 3px;
+      padding: 0;
       pointer-events: none;
       white-space: nowrap;
       letter-spacing: 0.01em;
@@ -191,45 +196,113 @@
         color 220ms ease, background 220ms ease;
       z-index: 1;
 
-      // floated: sits on the top edge, smaller text
+      // floated: centred on the top edge at 3/4 size -- the same step Vuetify
+      // makes, so the two labels sit on one line at one size
       &.is-floated {
-        top: -5px;
-        left: 10px;
+        top: 0;
+        left: var(--dp-field-px);
         transform: translateY(-50%);
-        font-size: 11px;
-        font-weight: 500;
-        color: var(--dp-fg-1);
+        font-size: calc(var(--dp-field-fs) * 0.75);
+        font-weight: 400;
       }
 
-      // accent color while the panel is open
+      // focused, again like Vuetify: same hue, full emphasis
       &.is-floated.is-active {
-        color: var(--dp-accent);
+        color: currentColor;
       }
     }
   }
 
-  // outlined: 1px border by default, 2px on focus
+  // ---- outlined: a Vuetify v-field outline ----
+  //
+  // The border is not on the field box at all; it is three absolutely
+  // positioned segments -- start, notch, end -- so the floated label sits in a
+  // real gap instead of on a painted patch. Every segment is currentColor at
+  // one of Vuetify's emphasis opacities: 38% at rest, high on hover, full and
+  // 2px when open.
   &--variant-outlined &__field {
-    border-width: 1px;
-    border-color: var(--dp-line-strong);
+    border: none;
+  }
 
-    &:hover {
-      border-color: var(--dp-fg-2);
-    }
+  & &__outline {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: stretch;
+    pointer-events: none;
+    border-radius: inherit;
+    color: color-mix(in srgb, currentColor var(--dp-line-alpha), transparent);
+    transition: color 120ms ease;
 
-    &.is-open {
-      border-width: 2px;
-      border-color: var(--dp-accent);
-    }
+    // the segments own their borders; width steps to 2px when the field opens
+    --dp-outline-w: 1px;
+  }
 
-    &.is-error {
-      border-color: var(--dp-danger);
+  & &__outlineStart,
+  & &__outlineEnd,
+  & &__outlineNotch {
+    border-color: currentColor;
+    border-style: solid;
+    border-width: 0;
+  }
+
+  & &__outlineStart {
+    // ends 4px before the label so the notch's own padding lands the gap
+    // exactly on the label's edges
+    flex: 0 0 calc(var(--dp-field-px) - 4px);
+    border-top-width: var(--dp-outline-w);
+    border-bottom-width: var(--dp-outline-w);
+    border-inline-start-width: var(--dp-outline-w);
+    border-start-start-radius: inherit;
+    border-end-start-radius: inherit;
+  }
+
+  & &__outlineEnd {
+    flex: 1;
+    border-top-width: var(--dp-outline-w);
+    border-bottom-width: var(--dp-outline-w);
+    border-inline-end-width: var(--dp-outline-w);
+    border-start-end-radius: inherit;
+    border-end-end-radius: inherit;
+  }
+
+  // the notch is exactly as wide as the label it holds ( the span inside is a
+  // hidden copy, there only to size the gap ), and drops its top border once
+  // the label floats into it
+  & &__outlineNotch {
+    position: relative;
+    flex: 0 1 auto;
+    max-width: calc(100% - var(--dp-field-px) * 2);
+    padding: 0 4px;
+    border-top-width: var(--dp-outline-w);
+    border-bottom-width: var(--dp-outline-w);
+
+    span {
+      visibility: hidden;
+      display: block;
+      font-size: calc(var(--dp-field-fs) * 0.75);
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+      height: 0;
     }
   }
 
-  // outlined: label background creates the border notch
-  &--variant-outlined .dp__label.is-floated {
-    background: var(--dp-bg-1);
+  &--variant-outlined &__field.is-floated &__outlineNotch {
+    border-top-color: transparent;
+  }
+
+  // the emphasis ladder
+  &--variant-outlined &__field:hover &__outline {
+    color: color-mix(in srgb, currentColor var(--dp-line-alpha-hover), transparent);
+  }
+
+  &--variant-outlined &__field.is-open &__outline {
+    color: currentColor;
+    --dp-outline-w: 2px;
+  }
+
+  &--variant-outlined &__field.is-error &__outline {
+    color: var(--dp-danger);
   }
 
   // filled: tinted background, rounded top corners, bottom border only
@@ -346,6 +419,7 @@
   }
 
   & &__panel {
+    color: var(--dp-fg-0);
     position: absolute;
     top: calc(100% + 6px);
     left: 0;
