@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
+import { ref, computed, watch, nextTick, onMounted, onBeforeUnmount } from 'vue';
 import MonthCalendar from './MonthCalendar.vue';
 import {
   fmtDisplay, parseDisplay, sameDay,
@@ -46,6 +46,7 @@ const emit = defineEmits(['update:modelValue', 'change']);
 const open = ref(props.defaultOpen);
 const error = ref(false);
 const wrapRef = ref(null);
+const panelRef = ref(null);
 
 const value = ref(props.mode === 'single' ? toDate(props.modelValue) : null);
 const range = ref(
@@ -131,12 +132,102 @@ function emitValue() {
   emit('change', out);
 }
 
+/* ---------- floating panel ---------- */
+// The panel is teleported to <body>, so it is no longer a descendant of the
+// field: everything below - the outside-click test and the placement - has to
+// work from the field's position on screen instead of from the DOM tree.
+const PANEL_GAP = 6;
+const VIEWPORT_MARGIN = 8;
+
+const panelPos = ref({ top: 0, left: 0 });
+const panelStyle = computed(() => ({
+  top: `${panelPos.value.top}px`,
+  left: `${panelPos.value.left}px`,
+}));
+
+function placePanel() {
+  const anchor = wrapRef.value;
+  const panel = panelRef.value;
+  if (!anchor || !panel) return;
+
+  const rect = anchor.getBoundingClientRect();
+  const pw = panel.offsetWidth;
+  const ph = panel.offsetHeight;
+  const vw = document.documentElement.clientWidth;
+  const vh = document.documentElement.clientHeight;
+
+  // flip above the field when the room below cannot hold the panel and there
+  // is more of it above - a field near the bottom of a dialog is the usual case
+  const roomBelow = vh - rect.bottom - PANEL_GAP - VIEWPORT_MARGIN;
+  const roomAbove = rect.top - PANEL_GAP - VIEWPORT_MARGIN;
+  const above = ph > roomBelow && roomAbove > roomBelow;
+
+  const top = above ? rect.top - PANEL_GAP - ph : rect.bottom + PANEL_GAP;
+
+  // an RTL host reads the field from its right edge, so the panel hangs from
+  // that edge instead
+  const rtl = getComputedStyle(anchor).direction === 'rtl';
+  const left = rtl ? rect.right - pw : rect.left;
+
+  panelPos.value = {
+    top: Math.max(VIEWPORT_MARGIN, Math.min(top, vh - ph - VIEWPORT_MARGIN)),
+    left: Math.max(VIEWPORT_MARGIN, Math.min(left, vw - pw - VIEWPORT_MARGIN)),
+  };
+}
+
+let placeFrame = 0;
+function schedulePlacement() {
+  if (placeFrame) return;
+  placeFrame = requestAnimationFrame(() => {
+    placeFrame = 0;
+    placePanel();
+  });
+}
+
+let panelResizeObserver = null;
+
+async function watchPanel() {
+  await nextTick();
+  placePanel();
+
+  // capture, so scrolling any ancestor - a scrollable dialog body, a table -
+  // keeps the panel pinned to the field rather than leaving it behind
+  window.addEventListener('scroll', schedulePlacement, true);
+  window.addEventListener('resize', schedulePlacement);
+
+  // the panel's own height changes with the month and the year popover
+  if (typeof ResizeObserver !== 'undefined' && panelRef.value) {
+    panelResizeObserver = new ResizeObserver(schedulePlacement);
+    panelResizeObserver.observe(panelRef.value);
+  }
+}
+
+function unwatchPanel() {
+  window.removeEventListener('scroll', schedulePlacement, true);
+  window.removeEventListener('resize', schedulePlacement);
+  panelResizeObserver?.disconnect();
+  panelResizeObserver = null;
+  if (placeFrame) cancelAnimationFrame(placeFrame);
+  placeFrame = 0;
+}
+
+watch(open, (isOpen) => (isOpen ? watchPanel() : unwatchPanel()));
+
 /* ---------- outside click ---------- */
 function onDocDown(e) {
-  if (wrapRef.value && !wrapRef.value.contains(e.target)) open.value = false;
+  if (!open.value) return;
+  if (wrapRef.value?.contains(e.target)) return;
+  if (panelRef.value?.contains(e.target)) return;
+  open.value = false;
 }
-onMounted(() => document.addEventListener('mousedown', onDocDown));
-onBeforeUnmount(() => document.removeEventListener('mousedown', onDocDown));
+onMounted(() => {
+  document.addEventListener('mousedown', onDocDown);
+  if (open.value) watchPanel();
+});
+onBeforeUnmount(() => {
+  document.removeEventListener('mousedown', onDocDown);
+  unwatchPanel();
+});
 
 /* ---------- pick handlers ---------- */
 function onPick(d) {
@@ -397,41 +488,61 @@ function clearAll() {
       <span v-for="(msg, i) in detailMessages" :key="i">{{ msg }}</span>
     </div>
 
-    <!-- panel -->
-    <div v-if="open" class="dp__panel" :class="{ 'dp__panel--range': mode === 'range' }">
-      <!-- range: shortcuts as a left sidebar -->
-      <div v-if="mode === 'range'" class="dp__scCol">
-        <button
-          v-for="sc in shortcuts"
-          :key="sc.id"
-          class="dp__scChip"
-          :class="{ 'is-active': isShortcutActive(sc) }"
-          @click="applyShortcut(sc)"
-        >{{ sc.label }}</button>
-      </div>
+    <!--
+      The panel is teleported to <body>. Rendered in place it is an absolutely
+      positioned child of the field, which any host ancestor with `overflow`
+      other than visible clips - a scrollable dialog body, a card, a table cell
+      - and any host stacking context can paint over, whatever z-index it
+      carries. Out at the body it is clipped by nothing, and it is placed from
+      the field's rect instead (see placePanel).
 
-      <div class="dp__panelBody">
-        <MonthCalendar
-          :view-date="viewDate"
-          :mode="mode"
-          :value="value"
-          :range="range"
-          :hover-date="hoverDate"
-          @update:viewDate="viewDate = $event"
-          @update:hoverDate="hoverDate = $event"
-          @pick="onPick"
-        />
-        <!-- single: shortcuts below the calendar -->
-        <div v-if="mode !== 'range'" class="dp__scRow">
-          <button
-            v-for="sc in shortcuts"
-            :key="sc.id"
-            class="dp__scChip"
-            :class="{ 'is-active': isShortcutActive(sc) }"
-            @click="applyShortcut(sc)"
-          >{{ sc.label }}</button>
+      The portal wrapper repeats the `dp` and modifier classes because every
+      rule in the stylesheet is written as a descendant of `.dp`, and the theme
+      tokens live there too.
+    -->
+    <Teleport to="body">
+      <div
+        v-if="open"
+        ref="panelRef"
+        :class="['dp', 'dp--portal', `dp--${theme}`, `dp--variant-${variant}`, { [`dp--mode-${mode}`]: true }]"
+        :style="panelStyle"
+      >
+        <div class="dp__panel" :class="{ 'dp__panel--range': mode === 'range' }">
+          <!-- range: shortcuts as a left sidebar -->
+          <div v-if="mode === 'range'" class="dp__scCol">
+            <button
+              v-for="sc in shortcuts"
+              :key="sc.id"
+              class="dp__scChip"
+              :class="{ 'is-active': isShortcutActive(sc) }"
+              @click="applyShortcut(sc)"
+            >{{ sc.label }}</button>
+          </div>
+
+          <div class="dp__panelBody">
+            <MonthCalendar
+              :view-date="viewDate"
+              :mode="mode"
+              :value="value"
+              :range="range"
+              :hover-date="hoverDate"
+              @update:viewDate="viewDate = $event"
+              @update:hoverDate="hoverDate = $event"
+              @pick="onPick"
+            />
+            <!-- single: shortcuts below the calendar -->
+            <div v-if="mode !== 'range'" class="dp__scRow">
+              <button
+                v-for="sc in shortcuts"
+                :key="sc.id"
+                class="dp__scChip"
+                :class="{ 'is-active': isShortcutActive(sc) }"
+                @click="applyShortcut(sc)"
+              >{{ sc.label }}</button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </Teleport>
   </div>
 </template>

@@ -1,4 +1,4 @@
-import { Fragment as e, computed as t, createBlock as n, createCommentVNode as r, createElementBlock as i, createElementVNode as a, createTextVNode as o, createVNode as s, normalizeClass as c, normalizeStyle as l, onBeforeUnmount as u, onMounted as d, openBlock as f, ref as p, renderList as m, resolveDynamicComponent as h, toDisplayString as g, unref as _, watch as v, withModifiers as y } from "vue";
+import { Fragment as e, Teleport as t, computed as n, createBlock as r, createCommentVNode as i, createElementBlock as a, createElementVNode as o, createTextVNode as s, createVNode as c, nextTick as l, normalizeClass as u, normalizeStyle as d, onBeforeUnmount as ee, onMounted as te, openBlock as f, ref as p, renderList as m, resolveDynamicComponent as h, toDisplayString as g, unref as _, watch as v, withModifiers as y } from "vue";
 //#region src/utils/date.js
 var b = [
 	"January",
@@ -46,7 +46,7 @@ function F(e, t = "mm/dd/yyyy") {
 	let n = C(e.getMonth() + 1), r = C(e.getDate()), i = e.getFullYear();
 	return t === "dd/mm/yyyy" ? `${r}/${n}/${i}` : `${n}/${r}/${i}`;
 }
-function I(e, t = "mm/dd/yyyy") {
+function ne(e, t = "mm/dd/yyyy") {
 	if (!e) return null;
 	let n = e.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2,4})$/);
 	if (!n) return null;
@@ -57,12 +57,12 @@ function I(e, t = "mm/dd/yyyy") {
 	let c = new Date(a, o - 1, s);
 	return c.getMonth() === o - 1 ? c : null;
 }
-function L(e) {
+function I(e) {
 	let t = D(O(e)), n = [];
 	for (let e = 0; e < 42; e++) n.push(P(t, e));
 	return n;
 }
-function ee(e) {
+function re(e) {
 	let t = E(/* @__PURE__ */ new Date());
 	if (e === "range") {
 		let e = P(t, -1), n = N(t, -1);
@@ -116,7 +116,17 @@ function ee(e) {
 }
 //#endregion
 //#region src/MonthCalendar.vue
-var R = { class: "mc" }, z = { class: "mc__head" }, B = { class: "mc__selectors" }, V = {
+var L = { class: "mc" }, R = { class: "mc__head" }, z = { class: "mc__selectors" }, B = {
+	width: "9",
+	height: "9",
+	viewBox: "0 0 16 16",
+	fill: "none",
+	stroke: "currentColor",
+	"stroke-width": "1.6",
+	"stroke-linecap": "round",
+	"stroke-linejoin": "round",
+	style: { transform: "rotate(-90deg)" }
+}, V = {
 	width: "9",
 	height: "9",
 	viewBox: "0 0 16 16",
@@ -127,22 +137,12 @@ var R = { class: "mc" }, z = { class: "mc__head" }, B = { class: "mc__selectors"
 	"stroke-linejoin": "round",
 	style: { transform: "rotate(-90deg)" }
 }, H = {
-	width: "9",
-	height: "9",
-	viewBox: "0 0 16 16",
-	fill: "none",
-	stroke: "currentColor",
-	"stroke-width": "1.6",
-	"stroke-linecap": "round",
-	"stroke-linejoin": "round",
-	style: { transform: "rotate(-90deg)" }
-}, U = {
 	key: 0,
 	class: "mc__pop"
-}, W = ["onClick"], G = {
+}, ie = ["onClick"], U = {
 	key: 1,
 	class: "mc__pop mc__pop--year"
-}, K = ["onClick"], q = {
+}, W = ["onClick"], G = {
 	width: "12",
 	height: "12",
 	viewBox: "0 0 16 16",
@@ -152,7 +152,7 @@ var R = { class: "mc" }, z = { class: "mc__head" }, B = { class: "mc__selectors"
 	"stroke-linecap": "round",
 	"stroke-linejoin": "round",
 	style: { transform: "rotate(180deg)" }
-}, J = { class: "mc__dow" }, Y = { class: "mc__grid" }, X = ["onClick", "onMouseenter"], te = {
+}, ae = { class: "mc__dow" }, K = { class: "mc__grid" }, q = ["onClick", "onMouseenter"], oe = {
 	__name: "MonthCalendar",
 	props: {
 		viewDate: {
@@ -181,45 +181,45 @@ var R = { class: "mc" }, z = { class: "mc__head" }, B = { class: "mc__selectors"
 		"update:hoverDate",
 		"pick"
 	],
-	setup(n, { emit: s }) {
-		let l = n, u = s, d = p(null), h = E(/* @__PURE__ */ new Date()), v = t(() => L(l.viewDate)), y = t(() => {
-			let e = l.viewDate.getFullYear();
+	setup(t, { emit: r }) {
+		let c = t, l = r, d = p(null), ee = E(/* @__PURE__ */ new Date()), te = n(() => I(c.viewDate)), h = n(() => {
+			let e = c.viewDate.getFullYear();
 			return Array.from({ length: 21 }, (t, n) => e - 10 + n);
 		});
-		function C(e) {
-			if (l.mode !== "range" || !l.range[0]) return !1;
-			let t = l.range[0], n = l.range[1] || l.hoverDate;
+		function v(e) {
+			if (c.mode !== "range" || !c.range[0]) return !1;
+			let t = c.range[0], n = c.range[1] || c.hoverDate;
 			if (!n) return !1;
 			let r = t < n ? t : n, i = t < n ? n : t;
 			return e >= E(r) && e <= E(i);
 		}
+		function y(e) {
+			l("update:viewDate", e);
+		}
+		function C(e) {
+			y(new Date(c.viewDate.getFullYear(), e, 1)), d.value = null;
+		}
 		function w(e) {
-			u("update:viewDate", e);
+			y(new Date(e, c.viewDate.getMonth(), 1)), d.value = null;
 		}
 		function D(e) {
-			w(new Date(l.viewDate.getFullYear(), e, 1)), d.value = null;
-		}
-		function O(e) {
-			w(new Date(e, l.viewDate.getMonth(), 1)), d.value = null;
-		}
-		function k(e) {
-			let t = e.getMonth() === l.viewDate.getMonth(), n = T(e, h), r = l.mode === "single" ? T(e, l.value) : T(e, l.range[0]) || T(e, l.range[1]), i = l.mode === "range" && T(e, l.range[0]), a = l.mode === "range" && (T(e, l.range[1]) || !l.range[1] && T(e, l.hoverDate));
+			let t = e.getMonth() === c.viewDate.getMonth(), n = T(e, ee), r = c.mode === "single" ? T(e, c.value) : T(e, c.range[0]) || T(e, c.range[1]), i = c.mode === "range" && T(e, c.range[0]), a = c.mode === "range" && (T(e, c.range[1]) || !c.range[1] && T(e, c.hoverDate));
 			return {
 				"is-out": !t,
 				"is-today": n,
 				"is-sel": r,
 				"is-start": i,
 				"is-end": a,
-				"is-in-range": C(e)
+				"is-in-range": v(e)
 			};
 		}
-		return (t, s) => (f(), i("div", R, [
-			a("div", z, [
-				a("button", {
+		return (n, r) => (f(), a("div", L, [
+			o("div", R, [
+				o("button", {
 					class: "mc__nav",
-					onClick: s[0] ||= (e) => w(_(M)(n.viewDate, -1)),
+					onClick: r[0] ||= (e) => y(_(M)(t.viewDate, -1)),
 					"aria-label": "Previous month"
-				}, [...s[4] ||= [a("svg", {
+				}, [...r[4] ||= [o("svg", {
 					width: "12",
 					height: "12",
 					viewBox: "0 0 16 16",
@@ -228,52 +228,52 @@ var R = { class: "mc" }, z = { class: "mc__head" }, B = { class: "mc__selectors"
 					"stroke-width": "1.6",
 					"stroke-linecap": "round",
 					"stroke-linejoin": "round"
-				}, [a("path", { d: "M10 12L6 8L10 4" })], -1)]]),
-				a("div", B, [
-					a("button", {
+				}, [o("path", { d: "M10 12L6 8L10 4" })], -1)]]),
+				o("div", z, [
+					o("button", {
 						class: "mc__sel",
-						onClick: s[1] ||= (e) => d.value = d.value === "m" ? null : "m"
-					}, [o(g(_(b)[n.viewDate.getMonth()]) + " ", 1), (f(), i("svg", V, [...s[5] ||= [a("path", { d: "M10 12L6 8L10 4" }, null, -1)]]))]),
-					a("button", {
+						onClick: r[1] ||= (e) => d.value = d.value === "m" ? null : "m"
+					}, [s(g(_(b)[t.viewDate.getMonth()]) + " ", 1), (f(), a("svg", B, [...r[5] ||= [o("path", { d: "M10 12L6 8L10 4" }, null, -1)]]))]),
+					o("button", {
 						class: "mc__sel mc__sel--year",
-						onClick: s[2] ||= (e) => d.value = d.value === "y" ? null : "y"
-					}, [o(g(n.viewDate.getFullYear()) + " ", 1), (f(), i("svg", H, [...s[6] ||= [a("path", { d: "M10 12L6 8L10 4" }, null, -1)]]))]),
-					d.value === "m" ? (f(), i("div", U, [(f(!0), i(e, null, m(_(x), (e, t) => (f(), i("button", {
+						onClick: r[2] ||= (e) => d.value = d.value === "y" ? null : "y"
+					}, [s(g(t.viewDate.getFullYear()) + " ", 1), (f(), a("svg", V, [...r[6] ||= [o("path", { d: "M10 12L6 8L10 4" }, null, -1)]]))]),
+					d.value === "m" ? (f(), a("div", H, [(f(!0), a(e, null, m(_(x), (e, n) => (f(), a("button", {
 						key: e,
-						class: c(["mc__popItem", { "is-active": t === n.viewDate.getMonth() }]),
-						onClick: (e) => D(t)
-					}, g(e), 11, W))), 128))])) : d.value === "y" ? (f(), i("div", G, [(f(!0), i(e, null, m(y.value, (e) => (f(), i("button", {
+						class: u(["mc__popItem", { "is-active": n === t.viewDate.getMonth() }]),
+						onClick: (e) => C(n)
+					}, g(e), 11, ie))), 128))])) : d.value === "y" ? (f(), a("div", U, [(f(!0), a(e, null, m(h.value, (e) => (f(), a("button", {
 						key: e,
-						class: c(["mc__popItem", { "is-active": e === n.viewDate.getFullYear() }]),
-						onClick: (t) => O(e)
-					}, g(e), 11, K))), 128))])) : r("", !0)
+						class: u(["mc__popItem", { "is-active": e === t.viewDate.getFullYear() }]),
+						onClick: (t) => w(e)
+					}, g(e), 11, W))), 128))])) : i("", !0)
 				]),
-				a("button", {
+				o("button", {
 					class: "mc__nav",
-					onClick: s[3] ||= (e) => w(_(M)(n.viewDate, 1)),
+					onClick: r[3] ||= (e) => y(_(M)(t.viewDate, 1)),
 					"aria-label": "Next month"
-				}, [(f(), i("svg", q, [...s[7] ||= [a("path", { d: "M10 12L6 8L10 4" }, null, -1)]]))])
+				}, [(f(), a("svg", G, [...r[7] ||= [o("path", { d: "M10 12L6 8L10 4" }, null, -1)]]))])
 			]),
-			a("div", J, [(f(!0), i(e, null, m(_(S), (e, t) => (f(), i("div", {
+			o("div", ae, [(f(!0), a(e, null, m(_(S), (e, t) => (f(), a("div", {
 				key: t,
 				class: "mc__dowCell"
 			}, g(e), 1))), 128))]),
-			a("div", Y, [(f(!0), i(e, null, m(v.value, (e, t) => (f(), i("button", {
+			o("div", K, [(f(!0), a(e, null, m(te.value, (e, t) => (f(), a("button", {
 				key: t,
-				class: c(["mc__cell", k(e)]),
-				onClick: (t) => u("pick", e),
-				onMouseenter: (t) => u("update:hoverDate", e)
-			}, [a("span", null, g(e.getDate()), 1)], 42, X))), 128))])
+				class: u(["mc__cell", D(e)]),
+				onClick: (t) => l("pick", e),
+				onMouseenter: (t) => l("update:hoverDate", e)
+			}, [o("span", null, g(e.getDate()), 1)], 42, q))), 128))])
 		]));
 	}
-}, ne = {
+}, se = {
 	key: 0,
 	class: "dp__label"
-}, re = {
+}, ce = {
 	key: 0,
 	class: "dp__outline",
 	"aria-hidden": "true"
-}, ie = { class: "dp__outlineNotch" }, ae = {
+}, le = { class: "dp__outlineNotch" }, ue = {
 	key: 3,
 	width: "14",
 	height: "14",
@@ -282,11 +282,11 @@ var R = { class: "mc" }, z = { class: "mc__head" }, B = { class: "mc__selectors"
 	stroke: "currentColor",
 	"stroke-width": "1.5",
 	"stroke-linecap": "round"
-}, oe = ["value", "placeholder"], se = {
+}, de = ["value", "placeholder"], fe = {
 	key: 0,
 	class: "dp__outline",
 	"aria-hidden": "true"
-}, ce = { class: "dp__outlineNotch" }, le = {
+}, pe = { class: "dp__outlineNotch" }, me = {
 	key: 3,
 	width: "14",
 	height: "14",
@@ -295,13 +295,13 @@ var R = { class: "mc" }, z = { class: "mc__head" }, B = { class: "mc__selectors"
 	stroke: "currentColor",
 	"stroke-width": "1.5",
 	"stroke-linecap": "round"
-}, ue = ["value", "placeholder"], de = ["value", "placeholder"], fe = {
+}, he = ["value", "placeholder"], ge = ["value", "placeholder"], _e = {
 	key: 0,
 	class: "dp__scCol"
-}, pe = ["onClick"], me = { class: "dp__panelBody" }, he = {
+}, ve = ["onClick"], ye = { class: "dp__panelBody" }, be = {
 	key: 0,
 	class: "dp__scRow"
-}, ge = ["onClick"], Z = {
+}, xe = ["onClick"], J = 6, Y = 8, X = {
 	__name: "DateInput",
 	props: {
 		mode: {
@@ -367,7 +367,7 @@ var R = { class: "mc" }, z = { class: "mc__head" }, B = { class: "mc__selectors"
 		}
 	},
 	emits: ["update:modelValue", "change"],
-	setup(o, { emit: _ }) {
+	setup(s, { emit: _ }) {
 		function b(e) {
 			if (!e) return null;
 			if (e instanceof Date) return isNaN(e) ? null : e;
@@ -377,75 +377,109 @@ var R = { class: "mc" }, z = { class: "mc__head" }, B = { class: "mc__selectors"
 			}
 			return null;
 		}
-		let x = o, S = _, C = p(x.defaultOpen), E = p(!1), D = p(null), k = p(x.mode === "single" ? b(x.modelValue) : null), A = p(x.mode === "range" && Array.isArray(x.modelValue) && x.modelValue.length === 2 ? [b(x.modelValue[0]), b(x.modelValue[1])] : [null, null]), j = p(null), M = p(O(k.value || A.value && A.value[0] || /* @__PURE__ */ new Date())), N = p(k.value ? F(k.value, x.format) : ""), P = p(A.value[0] ? F(A.value[0], x.format) : ""), L = p(A.value[1] ? F(A.value[1], x.format) : ""), R = p("start"), z = t(() => x.placeholder || x.format), B = t(() => ee(x.mode)), V = t(() => x.variant === "normal" ? !1 : x.mode === "single" ? C.value || !!k.value || !!N.value : C.value || !!A.value[0] || !!A.value[1] || !!P.value || !!L.value), H = t(() => E.value ? [`Couldn't read that date. Try ${x.format}.`] : x.messages ? Array.isArray(x.messages) ? x.messages : [x.messages] : x.hint ? [x.hint] : []), U = t(() => x.hideDetails === !0 ? !1 : x.hideDetails === "auto" ? H.value.length > 0 : !0);
+		let x = s, S = _, C = p(x.defaultOpen), E = p(!1), D = p(null), k = p(null), A = p(x.mode === "single" ? b(x.modelValue) : null), j = p(x.mode === "range" && Array.isArray(x.modelValue) && x.modelValue.length === 2 ? [b(x.modelValue[0]), b(x.modelValue[1])] : [null, null]), M = p(null), N = p(O(A.value || j.value && j.value[0] || /* @__PURE__ */ new Date())), P = p(A.value ? F(A.value, x.format) : ""), I = p(j.value[0] ? F(j.value[0], x.format) : ""), L = p(j.value[1] ? F(j.value[1], x.format) : ""), R = p("start"), z = n(() => x.placeholder || x.format), B = n(() => re(x.mode)), V = n(() => x.variant === "normal" ? !1 : x.mode === "single" ? C.value || !!A.value || !!P.value : C.value || !!j.value[0] || !!j.value[1] || !!I.value || !!L.value), H = n(() => E.value ? [`Couldn't read that date. Try ${x.format}.`] : x.messages ? Array.isArray(x.messages) ? x.messages : [x.messages] : x.hint ? [x.hint] : []), ie = n(() => x.hideDetails === !0 ? !1 : x.hideDetails === "auto" ? H.value.length > 0 : !0);
 		v(() => x.modelValue, (e) => {
 			if (x.mode === "single") {
 				let t = b(e);
-				k.value = t, N.value = t ? F(t, x.format) : "", t && (M.value = O(t));
+				A.value = t, P.value = t ? F(t, x.format) : "", t && (N.value = O(t));
 			} else if (Array.isArray(e)) {
 				let t = b(e[0]), n = b(e[1]);
-				A.value = [t, n], P.value = t ? F(t, x.format) : "", L.value = n ? F(n, x.format) : "", t && (M.value = O(t));
+				j.value = [t, n], I.value = t ? F(t, x.format) : "", L.value = n ? F(n, x.format) : "", t && (N.value = O(t));
 			}
-			W.value = JSON.stringify(x.mode === "single" ? k.value ? w(k.value) : null : [A.value[0] ? w(A.value[0]) : null, A.value[1] ? w(A.value[1]) : null]);
+			U.value = JSON.stringify(x.mode === "single" ? A.value ? w(A.value) : null : [j.value[0] ? w(j.value[0]) : null, j.value[1] ? w(j.value[1]) : null]);
 		});
-		let W = p(JSON.stringify(x.mode === "single" ? k.value ? w(k.value) : null : [A.value[0] ? w(A.value[0]) : null, A.value[1] ? w(A.value[1]) : null]));
-		function G() {
+		let U = p(JSON.stringify(x.mode === "single" ? A.value ? w(A.value) : null : [j.value[0] ? w(j.value[0]) : null, j.value[1] ? w(j.value[1]) : null]));
+		function W() {
 			let e;
-			if (x.mode === "single") e = k.value ? w(k.value) : null;
+			if (x.mode === "single") e = A.value ? w(A.value) : null;
 			else {
-				let [t, n] = A.value;
+				let [t, n] = j.value;
 				if (t && !n || !t && n) return;
 				e = [t ? w(t) : null, n ? w(n) : null];
 			}
 			let t = JSON.stringify(e);
-			t !== W.value && (W.value = t, S("update:modelValue", e), S("change", e));
+			t !== U.value && (U.value = t, S("update:modelValue", e), S("change", e));
 		}
-		function K(e) {
-			D.value && !D.value.contains(e.target) && (C.value = !1);
+		let G = p({
+			top: 0,
+			left: 0
+		}), ae = n(() => ({
+			top: `${G.value.top}px`,
+			left: `${G.value.left}px`
+		}));
+		function K() {
+			let e = D.value, t = k.value;
+			if (!e || !t) return;
+			let n = e.getBoundingClientRect(), r = t.offsetWidth, i = t.offsetHeight, a = document.documentElement.clientWidth, o = document.documentElement.clientHeight, s = o - n.bottom - J - Y, c = n.top - J - Y, l = i > s && c > s ? n.top - J - i : n.bottom + J, u = getComputedStyle(e).direction === "rtl" ? n.right - r : n.left;
+			G.value = {
+				top: Math.max(Y, Math.min(l, o - i - Y)),
+				left: Math.max(Y, Math.min(u, a - r - Y))
+			};
 		}
-		d(() => document.addEventListener("mousedown", K)), u(() => document.removeEventListener("mousedown", K));
-		function q(e) {
-			if (E.value = !1, x.mode === "single") k.value = e, N.value = F(e, x.format), M.value = O(e), G(), C.value = !1;
+		let q = 0;
+		function X() {
+			q ||= requestAnimationFrame(() => {
+				q = 0, K();
+			});
+		}
+		let Z = null;
+		async function Q() {
+			await l(), K(), window.addEventListener("scroll", X, !0), window.addEventListener("resize", X), typeof ResizeObserver < "u" && k.value && (Z = new ResizeObserver(X), Z.observe(k.value));
+		}
+		function Se() {
+			window.removeEventListener("scroll", X, !0), window.removeEventListener("resize", X), Z?.disconnect(), Z = null, q && cancelAnimationFrame(q), q = 0;
+		}
+		v(C, (e) => e ? Q() : Se());
+		function Ce(e) {
+			C.value && (D.value?.contains(e.target) || k.value?.contains(e.target) || (C.value = !1));
+		}
+		te(() => {
+			document.addEventListener("mousedown", Ce), C.value && Q();
+		}), ee(() => {
+			document.removeEventListener("mousedown", Ce), Se();
+		});
+		function we(e) {
+			if (E.value = !1, x.mode === "single") A.value = e, P.value = F(e, x.format), N.value = O(e), W(), C.value = !1;
 			else {
-				let [t, n] = A.value;
-				if (!t || t && n) A.value = [e, null], P.value = F(e, x.format), L.value = "", R.value = "end";
+				let [t, n] = j.value;
+				if (!t || t && n) j.value = [e, null], I.value = F(e, x.format), L.value = "", R.value = "end";
 				else {
 					let n = e < t ? [e, t] : [t, e];
-					A.value = n, P.value = F(n[0], x.format), L.value = F(n[1], x.format), R.value = "start", C.value = !1;
+					j.value = n, I.value = F(n[0], x.format), L.value = F(n[1], x.format), R.value = "start", C.value = !1;
 				}
-				G();
+				W();
 			}
 		}
-		function J(e) {
-			E.value = !1, x.mode === "single" ? (k.value = e.date, N.value = F(e.date, x.format), M.value = O(e.date), G(), C.value = !1) : (A.value = [...e.range], P.value = F(e.range[0], x.format), L.value = F(e.range[1], x.format), M.value = O(e.range[0]), G(), C.value = !1);
+		function Te(e) {
+			E.value = !1, x.mode === "single" ? (A.value = e.date, P.value = F(e.date, x.format), N.value = O(e.date), W(), C.value = !1) : (j.value = [...e.range], I.value = F(e.range[0], x.format), L.value = F(e.range[1], x.format), N.value = O(e.range[0]), W(), C.value = !1);
 		}
-		function Y(e) {
-			return x.mode === "single" ? k.value && T(k.value, e.date) : A.value[0] && A.value[1] && T(A.value[0], e.range[0]) && T(A.value[1], e.range[1]);
+		function Ee(e) {
+			return x.mode === "single" ? A.value && T(A.value, e.date) : j.value[0] && j.value[1] && T(j.value[0], e.range[0]) && T(j.value[1], e.range[1]);
 		}
-		function X() {
-			if (N.value === "") {
-				k.value = null, E.value = !1, G();
+		function De() {
+			if (P.value === "") {
+				A.value = null, E.value = !1, W();
 				return;
 			}
-			let e = I(N.value, x.format);
-			e ? (k.value = e, M.value = O(e), E.value = !1, G()) : E.value = !0;
+			let e = ne(P.value, x.format);
+			e ? (A.value = e, N.value = O(e), E.value = !1, W()) : E.value = !0;
 		}
-		function Z(e) {
-			let t = e === "start" ? P.value : L.value, n = e === "start" ? 0 : 1;
+		function Oe(e) {
+			let t = e === "start" ? I.value : L.value, n = e === "start" ? 0 : 1;
 			if (t === "") {
-				let e = [...A.value];
-				e[n] = null, A.value = e, E.value = !1, G();
+				let e = [...j.value];
+				e[n] = null, j.value = e, E.value = !1, W();
 				return;
 			}
-			let r = I(t, x.format);
+			let r = ne(t, x.format);
 			if (!r) {
 				E.value = !0;
 				return;
 			}
-			let i = [...A.value];
-			i[n] = r, i[0] && i[1] && i[1] < i[0] && (i = [i[1], i[0]]), A.value = i, P.value = i[0] ? F(i[0], x.format) : "", L.value = i[1] ? F(i[1], x.format) : "", i[n] && (M.value = O(i[n])), E.value = !1, G();
+			let i = [...j.value];
+			i[n] = r, i[0] && i[1] && i[1] < i[0] && (i = [i[1], i[0]]), j.value = i, I.value = i[0] ? F(i[0], x.format) : "", L.value = i[1] ? F(i[1], x.format) : "", i[n] && (N.value = O(i[n])), E.value = !1, W();
 		}
-		function Q(e, t, n) {
+		function ke(e, t, n) {
 			if (t.length <= e.length) return t;
 			let r = t.split("/"), i = r.length - 1;
 			if (i >= 2) return t;
@@ -457,182 +491,191 @@ var R = { class: "mc" }, z = { class: "mc__head" }, B = { class: "mc__selectors"
 			}
 			return t;
 		}
-		function _e(e) {
+		function Ae(e) {
 			E.value = !1;
-			let t = N.value, n = e.target.value, r = Q(t, n, x.format);
-			r === n ? N.value = n : (e.target.value = r, N.value = r);
+			let t = P.value, n = e.target.value, r = ke(t, n, x.format);
+			r === n ? P.value = n : (e.target.value = r, P.value = r);
 		}
-		function ve(e, t) {
+		function je(e, t) {
 			E.value = !1;
-			let n = e === "start" ? P : L, r = n.value, i = t.target.value, a = Q(r, i, x.format);
+			let n = e === "start" ? I : L, r = n.value, i = t.target.value, a = ke(r, i, x.format);
 			a === i ? n.value = i : (t.target.value = a, n.value = a);
 		}
 		function $() {
-			k.value = null, A.value = [null, null], N.value = "", P.value = "", L.value = "", E.value = !1, G();
+			A.value = null, j.value = [null, null], P.value = "", I.value = "", L.value = "", E.value = !1, W();
 		}
-		return (t, u) => (f(), i("div", {
-			class: c([
+		return (n, l) => (f(), a("div", {
+			class: u([
 				"dp",
-				`dp--${o.theme}`,
-				`dp--variant-${o.variant}`,
-				{ [`dp--mode-${o.mode}`]: !0 }
+				`dp--${s.theme}`,
+				`dp--variant-${s.variant}`,
+				{ [`dp--mode-${s.mode}`]: !0 }
 			]),
 			ref_key: "wrapRef",
 			ref: D
 		}, [
-			o.variant === "normal" ? (f(), i("label", ne, g(o.label), 1)) : r("", !0),
-			o.mode === "single" ? (f(), i("div", {
+			s.variant === "normal" ? (f(), a("label", se, g(s.label), 1)) : i("", !0),
+			s.mode === "single" ? (f(), a("div", {
 				key: 1,
-				class: c(["dp__field", {
+				class: u(["dp__field", {
 					"is-error": E.value,
 					"is-open": C.value,
 					"is-floated": V.value
 				}]),
-				style: l(o.bgColor ? { background: o.bgColor } : void 0)
+				style: d(s.bgColor ? { background: s.bgColor } : void 0)
 			}, [
-				o.variant === "outlined" ? (f(), i("div", re, [
-					u[9] ||= a("div", { class: "dp__outlineStart" }, null, -1),
-					a("div", ie, [a("span", null, g(o.label), 1)]),
-					u[10] ||= a("div", { class: "dp__outlineEnd" }, null, -1)
-				])) : r("", !0),
-				o.variant === "normal" ? r("", !0) : (f(), i("label", {
+				s.variant === "outlined" ? (f(), a("div", ce, [
+					l[9] ||= o("div", { class: "dp__outlineStart" }, null, -1),
+					o("div", le, [o("span", null, g(s.label), 1)]),
+					l[10] ||= o("div", { class: "dp__outlineEnd" }, null, -1)
+				])) : i("", !0),
+				s.variant === "normal" ? i("", !0) : (f(), a("label", {
 					key: 1,
-					class: c(["dp__label", {
+					class: u(["dp__label", {
 						"is-floated": V.value,
 						"is-active": C.value
 					}])
-				}, g(o.label), 3)),
-				o.icon ? (f(), n(h(o.icon), {
+				}, g(s.label), 3)),
+				s.icon ? (f(), r(h(s.icon), {
 					key: 2,
 					class: "dp__icon"
-				})) : (f(), i("svg", ae, [...u[11] ||= [a("rect", {
+				})) : (f(), a("svg", ue, [...l[11] ||= [o("rect", {
 					x: "2.25",
 					y: "3.25",
 					width: "11.5",
 					height: "10.5",
 					rx: "1.5"
-				}, null, -1), a("path", { d: "M2.5 6.5h11M5.5 2v2.5M10.5 2v2.5" }, null, -1)]])),
-				a("input", {
-					value: N.value,
+				}, null, -1), o("path", { d: "M2.5 6.5h11M5.5 2v2.5M10.5 2v2.5" }, null, -1)]])),
+				o("input", {
+					value: P.value,
 					class: "dp__input",
-					placeholder: o.variant !== "normal" && !V.value ? "" : z.value,
+					placeholder: s.variant !== "normal" && !V.value ? "" : z.value,
 					inputmode: "numeric",
 					maxlength: "10",
-					onFocus: u[0] ||= (e) => C.value = !0,
-					onBlur: X,
-					onInput: _e
-				}, null, 40, oe),
-				o.clearable && (k.value || N.value) ? (f(), i("button", {
+					onFocus: l[0] ||= (e) => C.value = !0,
+					onBlur: De,
+					onInput: Ae
+				}, null, 40, de),
+				s.clearable && (A.value || P.value) ? (f(), a("button", {
 					key: 4,
 					class: "dp__clear",
 					onMousedown: y($, ["prevent"]),
 					"aria-label": "Clear"
-				}, "×", 32)) : r("", !0)
-			], 6)) : (f(), i("div", {
+				}, "×", 32)) : i("", !0)
+			], 6)) : (f(), a("div", {
 				key: 2,
-				class: c(["dp__field dp__field--range", {
+				class: u(["dp__field dp__field--range", {
 					"is-error": E.value,
 					"is-open": C.value,
 					"is-floated": V.value
 				}]),
-				style: l(o.bgColor ? { background: o.bgColor } : void 0)
+				style: d(s.bgColor ? { background: s.bgColor } : void 0)
 			}, [
-				o.variant === "outlined" ? (f(), i("div", se, [
-					u[12] ||= a("div", { class: "dp__outlineStart" }, null, -1),
-					a("div", ce, [a("span", null, g(o.label), 1)]),
-					u[13] ||= a("div", { class: "dp__outlineEnd" }, null, -1)
-				])) : r("", !0),
-				o.variant === "normal" ? r("", !0) : (f(), i("label", {
+				s.variant === "outlined" ? (f(), a("div", fe, [
+					l[12] ||= o("div", { class: "dp__outlineStart" }, null, -1),
+					o("div", pe, [o("span", null, g(s.label), 1)]),
+					l[13] ||= o("div", { class: "dp__outlineEnd" }, null, -1)
+				])) : i("", !0),
+				s.variant === "normal" ? i("", !0) : (f(), a("label", {
 					key: 1,
-					class: c(["dp__label", {
+					class: u(["dp__label", {
 						"is-floated": V.value,
 						"is-active": C.value
 					}])
-				}, g(o.label), 3)),
-				o.icon ? (f(), n(h(o.icon), {
+				}, g(s.label), 3)),
+				s.icon ? (f(), r(h(s.icon), {
 					key: 2,
 					class: "dp__icon"
-				})) : (f(), i("svg", le, [...u[14] ||= [a("rect", {
+				})) : (f(), a("svg", me, [...l[14] ||= [o("rect", {
 					x: "2.25",
 					y: "3.25",
 					width: "11.5",
 					height: "10.5",
 					rx: "1.5"
-				}, null, -1), a("path", { d: "M2.5 6.5h11M5.5 2v2.5M10.5 2v2.5" }, null, -1)]])),
-				a("input", {
-					value: P.value,
-					class: c(["dp__input", { "is-focus": R.value === "start" && C.value }]),
-					placeholder: o.variant !== "normal" && !V.value ? "" : z.value,
+				}, null, -1), o("path", { d: "M2.5 6.5h11M5.5 2v2.5M10.5 2v2.5" }, null, -1)]])),
+				o("input", {
+					value: I.value,
+					class: u(["dp__input", { "is-focus": R.value === "start" && C.value }]),
+					placeholder: s.variant !== "normal" && !V.value ? "" : z.value,
 					inputmode: "numeric",
 					maxlength: "10",
-					onFocus: u[1] ||= (e) => {
+					onFocus: l[1] ||= (e) => {
 						C.value = !0, R.value = "start";
 					},
-					onBlur: u[2] ||= (e) => Z("start"),
-					onInput: u[3] ||= (e) => ve("start", e)
-				}, null, 42, ue),
-				u[15] ||= a("span", { class: "dp__sep" }, "→", -1),
-				a("input", {
+					onBlur: l[2] ||= (e) => Oe("start"),
+					onInput: l[3] ||= (e) => je("start", e)
+				}, null, 42, he),
+				l[15] ||= o("span", { class: "dp__sep" }, "→", -1),
+				o("input", {
 					value: L.value,
-					class: c(["dp__input", { "is-focus": R.value === "end" && C.value }]),
-					placeholder: o.variant !== "normal" && !V.value ? "" : z.value,
+					class: u(["dp__input", { "is-focus": R.value === "end" && C.value }]),
+					placeholder: s.variant !== "normal" && !V.value ? "" : z.value,
 					inputmode: "numeric",
 					maxlength: "10",
-					onFocus: u[4] ||= (e) => {
+					onFocus: l[4] ||= (e) => {
 						C.value = !0, R.value = "end";
 					},
-					onBlur: u[5] ||= (e) => Z("end"),
-					onInput: u[6] ||= (e) => ve("end", e)
-				}, null, 42, de),
-				o.clearable && (A.value[0] || A.value[1] || P.value || L.value) ? (f(), i("button", {
+					onBlur: l[5] ||= (e) => Oe("end"),
+					onInput: l[6] ||= (e) => je("end", e)
+				}, null, 42, ge),
+				s.clearable && (j.value[0] || j.value[1] || I.value || L.value) ? (f(), a("button", {
 					key: 4,
 					class: "dp__clear",
 					onMousedown: y($, ["prevent"]),
 					"aria-label": "Clear"
-				}, "×", 32)) : r("", !0)
+				}, "×", 32)) : i("", !0)
 			], 6)),
-			U.value ? (f(), i("div", {
+			ie.value ? (f(), a("div", {
 				key: 3,
-				class: c(["dp__details", {
+				class: u(["dp__details", {
 					"is-error": E.value,
 					"is-hint": !E.value && H.value.length
 				}])
-			}, [(f(!0), i(e, null, m(H.value, (e, t) => (f(), i("span", { key: t }, g(e), 1))), 128))], 2)) : r("", !0),
-			C.value ? (f(), i("div", {
-				key: 4,
-				class: c(["dp__panel", { "dp__panel--range": o.mode === "range" }])
-			}, [o.mode === "range" ? (f(), i("div", fe, [(f(!0), i(e, null, m(B.value, (e) => (f(), i("button", {
+			}, [(f(!0), a(e, null, m(H.value, (e, t) => (f(), a("span", { key: t }, g(e), 1))), 128))], 2)) : i("", !0),
+			(f(), r(t, { to: "body" }, [C.value ? (f(), a("div", {
+				key: 0,
+				ref_key: "panelRef",
+				ref: k,
+				class: u([
+					"dp",
+					"dp--portal",
+					`dp--${s.theme}`,
+					`dp--variant-${s.variant}`,
+					{ [`dp--mode-${s.mode}`]: !0 }
+				]),
+				style: d(ae.value)
+			}, [o("div", { class: u(["dp__panel", { "dp__panel--range": s.mode === "range" }]) }, [s.mode === "range" ? (f(), a("div", _e, [(f(!0), a(e, null, m(B.value, (e) => (f(), a("button", {
 				key: e.id,
-				class: c(["dp__scChip", { "is-active": Y(e) }]),
-				onClick: (t) => J(e)
-			}, g(e.label), 11, pe))), 128))])) : r("", !0), a("div", me, [s(te, {
-				"view-date": M.value,
-				mode: o.mode,
-				value: k.value,
-				range: A.value,
-				"hover-date": j.value,
-				"onUpdate:viewDate": u[7] ||= (e) => M.value = e,
-				"onUpdate:hoverDate": u[8] ||= (e) => j.value = e,
-				onPick: q
+				class: u(["dp__scChip", { "is-active": Ee(e) }]),
+				onClick: (t) => Te(e)
+			}, g(e.label), 11, ve))), 128))])) : i("", !0), o("div", ye, [c(oe, {
+				"view-date": N.value,
+				mode: s.mode,
+				value: A.value,
+				range: j.value,
+				"hover-date": M.value,
+				"onUpdate:viewDate": l[7] ||= (e) => N.value = e,
+				"onUpdate:hoverDate": l[8] ||= (e) => M.value = e,
+				onPick: we
 			}, null, 8, [
 				"view-date",
 				"mode",
 				"value",
 				"range",
 				"hover-date"
-			]), o.mode === "range" ? r("", !0) : (f(), i("div", he, [(f(!0), i(e, null, m(B.value, (e) => (f(), i("button", {
+			]), s.mode === "range" ? i("", !0) : (f(), a("div", be, [(f(!0), a(e, null, m(B.value, (e) => (f(), a("button", {
 				key: e.id,
-				class: c(["dp__scChip", { "is-active": Y(e) }]),
-				onClick: (t) => J(e)
-			}, g(e.label), 11, ge))), 128))]))])], 2)) : r("", !0)
+				class: u(["dp__scChip", { "is-active": Ee(e) }]),
+				onClick: (t) => Te(e)
+			}, g(e.label), 11, xe))), 128))]))])], 2)], 6)) : i("", !0)]))
 		], 2));
 	}
 };
 //#endregion
 //#region src/index.js
-Z.install = (e) => {
-	e.component("DateInput", Z);
+X.install = (e) => {
+	e.component("DateInput", X);
 };
-var Q = Z;
+var Z = X;
 //#endregion
-export { Z as DateInput, Q as default };
+export { X as DateInput, Z as default };

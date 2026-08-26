@@ -496,6 +496,24 @@
   }
 }
 
+// The teleported panel (see DateInput.vue): the wrapper carries `.dp`, so
+// every rule above still matches inside it, and it is positioned from the
+// field's rect in script rather than from the field's box in CSS.
+//
+// Written with two classes so it beats `.dp .dp__panel` whatever order the
+// bundler emits, and the z-index is a custom property so a host stacking a
+// panel over its own overlays can raise it without patching this file.
+.dp.dp--portal {
+  position: fixed;
+  width: max-content;
+  max-width: 100vw;
+  z-index: var(--dp-z-panel, 2500);
+
+  .dp__panel {
+    position: static;
+  }
+}
+
 // ---- month calendar ----
 // nested under .dp for the same reason the blocks above are: see the note at
 // the top of the file
