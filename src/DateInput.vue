@@ -98,21 +98,37 @@ watch(() => props.modelValue, (v) => {
     textEnd.value = b ? fmtDisplay(b, props.format) : '';
     if (a) viewDate.value = startOfMonth(a);
   }
+  lastEmitted.value = JSON.stringify(
+    props.mode === 'single'
+      ? (value.value ? ymd(value.value) : null)
+      : [range.value[0] ? ymd(range.value[0]) : null, range.value[1] ? ymd(range.value[1]) : null]
+  );
 });
 
+/** Serialized form of the last value we emitted (or received from the parent),
+ *  used to avoid firing listeners twice with the same value. */
+const lastEmitted = ref(JSON.stringify(
+  props.mode === 'single'
+    ? (value.value ? ymd(value.value) : null)
+    : [range.value[0] ? ymd(range.value[0]) : null, range.value[1] ? ymd(range.value[1]) : null]
+));
+
 function emitValue() {
+  let out;
   if (props.mode === 'single') {
-    const out = value.value ? ymd(value.value) : null;
-    emit('update:modelValue', out);
-    emit('change', out);
+    out = value.value ? ymd(value.value) : null;
   } else {
-    const out = [
-      range.value[0] ? ymd(range.value[0]) : null,
-      range.value[1] ? ymd(range.value[1]) : null,
-    ];
-    emit('update:modelValue', out);
-    emit('change', out);
+    const [s, e] = range.value;
+    // In range mode a half-picked range is not a value: emit only once both
+    // ends are set (or once the range is fully cleared).
+    if ((s && !e) || (!s && e)) return;
+    out = [s ? ymd(s) : null, e ? ymd(e) : null];
   }
+  const sig = JSON.stringify(out);
+  if (sig === lastEmitted.value) return;
+  lastEmitted.value = sig;
+  emit('update:modelValue', out);
+  emit('change', out);
 }
 
 /* ---------- outside click ---------- */

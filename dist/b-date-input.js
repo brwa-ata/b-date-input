@@ -386,22 +386,26 @@ var R = { class: "mc" }, z = { class: "mc__head" }, B = { class: "mc__selectors"
 				let t = b(e[0]), n = b(e[1]);
 				A.value = [t, n], P.value = t ? F(t, x.format) : "", L.value = n ? F(n, x.format) : "", t && (M.value = O(t));
 			}
+			W.value = JSON.stringify(x.mode === "single" ? k.value ? w(k.value) : null : [A.value[0] ? w(A.value[0]) : null, A.value[1] ? w(A.value[1]) : null]);
 		});
-		function W() {
-			if (x.mode === "single") {
-				let e = k.value ? w(k.value) : null;
-				S("update:modelValue", e), S("change", e);
-			} else {
-				let e = [A.value[0] ? w(A.value[0]) : null, A.value[1] ? w(A.value[1]) : null];
-				S("update:modelValue", e), S("change", e);
+		let W = p(JSON.stringify(x.mode === "single" ? k.value ? w(k.value) : null : [A.value[0] ? w(A.value[0]) : null, A.value[1] ? w(A.value[1]) : null]));
+		function G() {
+			let e;
+			if (x.mode === "single") e = k.value ? w(k.value) : null;
+			else {
+				let [t, n] = A.value;
+				if (t && !n || !t && n) return;
+				e = [t ? w(t) : null, n ? w(n) : null];
 			}
+			let t = JSON.stringify(e);
+			t !== W.value && (W.value = t, S("update:modelValue", e), S("change", e));
 		}
-		function G(e) {
+		function K(e) {
 			D.value && !D.value.contains(e.target) && (C.value = !1);
 		}
-		d(() => document.addEventListener("mousedown", G)), u(() => document.removeEventListener("mousedown", G));
-		function K(e) {
-			if (E.value = !1, x.mode === "single") k.value = e, N.value = F(e, x.format), M.value = O(e), W(), C.value = !1;
+		d(() => document.addEventListener("mousedown", K)), u(() => document.removeEventListener("mousedown", K));
+		function q(e) {
+			if (E.value = !1, x.mode === "single") k.value = e, N.value = F(e, x.format), M.value = O(e), G(), C.value = !1;
 			else {
 				let [t, n] = A.value;
 				if (!t || t && n) A.value = [e, null], P.value = F(e, x.format), L.value = "", R.value = "end";
@@ -409,28 +413,28 @@ var R = { class: "mc" }, z = { class: "mc__head" }, B = { class: "mc__selectors"
 					let n = e < t ? [e, t] : [t, e];
 					A.value = n, P.value = F(n[0], x.format), L.value = F(n[1], x.format), R.value = "start", C.value = !1;
 				}
-				W();
+				G();
 			}
 		}
-		function q(e) {
-			E.value = !1, x.mode === "single" ? (k.value = e.date, N.value = F(e.date, x.format), M.value = O(e.date), W(), C.value = !1) : (A.value = [...e.range], P.value = F(e.range[0], x.format), L.value = F(e.range[1], x.format), M.value = O(e.range[0]), W(), C.value = !1);
-		}
 		function J(e) {
+			E.value = !1, x.mode === "single" ? (k.value = e.date, N.value = F(e.date, x.format), M.value = O(e.date), G(), C.value = !1) : (A.value = [...e.range], P.value = F(e.range[0], x.format), L.value = F(e.range[1], x.format), M.value = O(e.range[0]), G(), C.value = !1);
+		}
+		function Y(e) {
 			return x.mode === "single" ? k.value && T(k.value, e.date) : A.value[0] && A.value[1] && T(A.value[0], e.range[0]) && T(A.value[1], e.range[1]);
 		}
-		function Y() {
+		function X() {
 			if (N.value === "") {
-				k.value = null, E.value = !1, W();
+				k.value = null, E.value = !1, G();
 				return;
 			}
 			let e = I(N.value, x.format);
-			e ? (k.value = e, M.value = O(e), E.value = !1, W()) : E.value = !0;
+			e ? (k.value = e, M.value = O(e), E.value = !1, G()) : E.value = !0;
 		}
-		function X(e) {
+		function Z(e) {
 			let t = e === "start" ? P.value : L.value, n = e === "start" ? 0 : 1;
 			if (t === "") {
 				let e = [...A.value];
-				e[n] = null, A.value = e, E.value = !1, W();
+				e[n] = null, A.value = e, E.value = !1, G();
 				return;
 			}
 			let r = I(t, x.format);
@@ -439,9 +443,9 @@ var R = { class: "mc" }, z = { class: "mc__head" }, B = { class: "mc__selectors"
 				return;
 			}
 			let i = [...A.value];
-			i[n] = r, i[0] && i[1] && i[1] < i[0] && (i = [i[1], i[0]]), A.value = i, P.value = i[0] ? F(i[0], x.format) : "", L.value = i[1] ? F(i[1], x.format) : "", i[n] && (M.value = O(i[n])), E.value = !1, W();
+			i[n] = r, i[0] && i[1] && i[1] < i[0] && (i = [i[1], i[0]]), A.value = i, P.value = i[0] ? F(i[0], x.format) : "", L.value = i[1] ? F(i[1], x.format) : "", i[n] && (M.value = O(i[n])), E.value = !1, G();
 		}
-		function Z(e, t, n) {
+		function Q(e, t, n) {
 			if (t.length <= e.length) return t;
 			let r = t.split("/"), i = r.length - 1;
 			if (i >= 2) return t;
@@ -453,18 +457,18 @@ var R = { class: "mc" }, z = { class: "mc__head" }, B = { class: "mc__selectors"
 			}
 			return t;
 		}
-		function Q(e) {
+		function _e(e) {
 			E.value = !1;
-			let t = N.value, n = e.target.value, r = Z(t, n, x.format);
+			let t = N.value, n = e.target.value, r = Q(t, n, x.format);
 			r === n ? N.value = n : (e.target.value = r, N.value = r);
 		}
-		function $(e, t) {
+		function ve(e, t) {
 			E.value = !1;
-			let n = e === "start" ? P : L, r = n.value, i = t.target.value, a = Z(r, i, x.format);
+			let n = e === "start" ? P : L, r = n.value, i = t.target.value, a = Q(r, i, x.format);
 			a === i ? n.value = i : (t.target.value = a, n.value = a);
 		}
-		function _e() {
-			k.value = null, A.value = [null, null], N.value = "", P.value = "", L.value = "", E.value = !1, W();
+		function $() {
+			k.value = null, A.value = [null, null], N.value = "", P.value = "", L.value = "", E.value = !1, G();
 		}
 		return (t, u) => (f(), i("div", {
 			class: c([
@@ -515,13 +519,13 @@ var R = { class: "mc" }, z = { class: "mc__head" }, B = { class: "mc__selectors"
 					inputmode: "numeric",
 					maxlength: "10",
 					onFocus: u[0] ||= (e) => C.value = !0,
-					onBlur: Y,
-					onInput: Q
+					onBlur: X,
+					onInput: _e
 				}, null, 40, oe),
 				o.clearable && (k.value || N.value) ? (f(), i("button", {
 					key: 4,
 					class: "dp__clear",
-					onMousedown: y(_e, ["prevent"]),
+					onMousedown: y($, ["prevent"]),
 					"aria-label": "Clear"
 				}, "×", 32)) : r("", !0)
 			], 6)) : (f(), i("div", {
@@ -564,8 +568,8 @@ var R = { class: "mc" }, z = { class: "mc__head" }, B = { class: "mc__selectors"
 					onFocus: u[1] ||= (e) => {
 						C.value = !0, R.value = "start";
 					},
-					onBlur: u[2] ||= (e) => X("start"),
-					onInput: u[3] ||= (e) => $("start", e)
+					onBlur: u[2] ||= (e) => Z("start"),
+					onInput: u[3] ||= (e) => ve("start", e)
 				}, null, 42, ue),
 				u[15] ||= a("span", { class: "dp__sep" }, "→", -1),
 				a("input", {
@@ -577,13 +581,13 @@ var R = { class: "mc" }, z = { class: "mc__head" }, B = { class: "mc__selectors"
 					onFocus: u[4] ||= (e) => {
 						C.value = !0, R.value = "end";
 					},
-					onBlur: u[5] ||= (e) => X("end"),
-					onInput: u[6] ||= (e) => $("end", e)
+					onBlur: u[5] ||= (e) => Z("end"),
+					onInput: u[6] ||= (e) => ve("end", e)
 				}, null, 42, de),
 				o.clearable && (A.value[0] || A.value[1] || P.value || L.value) ? (f(), i("button", {
 					key: 4,
 					class: "dp__clear",
-					onMousedown: y(_e, ["prevent"]),
+					onMousedown: y($, ["prevent"]),
 					"aria-label": "Clear"
 				}, "×", 32)) : r("", !0)
 			], 6)),
@@ -599,8 +603,8 @@ var R = { class: "mc" }, z = { class: "mc__head" }, B = { class: "mc__selectors"
 				class: c(["dp__panel", { "dp__panel--range": o.mode === "range" }])
 			}, [o.mode === "range" ? (f(), i("div", fe, [(f(!0), i(e, null, m(B.value, (e) => (f(), i("button", {
 				key: e.id,
-				class: c(["dp__scChip", { "is-active": J(e) }]),
-				onClick: (t) => q(e)
+				class: c(["dp__scChip", { "is-active": Y(e) }]),
+				onClick: (t) => J(e)
 			}, g(e.label), 11, pe))), 128))])) : r("", !0), a("div", me, [s(te, {
 				"view-date": M.value,
 				mode: o.mode,
@@ -609,7 +613,7 @@ var R = { class: "mc" }, z = { class: "mc__head" }, B = { class: "mc__selectors"
 				"hover-date": j.value,
 				"onUpdate:viewDate": u[7] ||= (e) => M.value = e,
 				"onUpdate:hoverDate": u[8] ||= (e) => j.value = e,
-				onPick: K
+				onPick: q
 			}, null, 8, [
 				"view-date",
 				"mode",
@@ -618,8 +622,8 @@ var R = { class: "mc" }, z = { class: "mc__head" }, B = { class: "mc__selectors"
 				"hover-date"
 			]), o.mode === "range" ? r("", !0) : (f(), i("div", he, [(f(!0), i(e, null, m(B.value, (e) => (f(), i("button", {
 				key: e.id,
-				class: c(["dp__scChip", { "is-active": J(e) }]),
-				onClick: (t) => q(e)
+				class: c(["dp__scChip", { "is-active": Y(e) }]),
+				onClick: (t) => J(e)
 			}, g(e.label), 11, ge))), 128))]))])], 2)) : r("", !0)
 		], 2));
 	}
